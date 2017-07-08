@@ -1,14 +1,13 @@
 package main;
 
 public class Player {
-
+	//Creates a Player
 	private final String first;
 	private final String last;
 	private int wins = 0;
 	private int losses = 0;
 	private int points;
 	private static int count;
-	
 	
 	public Player(String first, String last){
 		this.first = first;

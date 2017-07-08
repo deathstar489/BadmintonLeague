@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+//Main file, main function runs once
 public class Main {
 
-	private static ArrayList<Player> players = new ArrayList<Player>();
-	private static ArrayList<Player> pool = new ArrayList<Player>();
-	private static ArrayList<Player> out = new ArrayList<Player>();
-	private static ArrayList<Player> sidelines = new ArrayList<Player>();
+	private static String fileName = "Master";
+
+	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
+	private static ArrayList<Player> pool = new ArrayList<Player>(); //all people who are not sitting out
+	private static ArrayList<Player> out = new ArrayList<Player>(); //People who havent been out
+	private static ArrayList<Player> sidelines = new ArrayList<Player>(); //People who are out that current round
 	
-	private static ArrayList<Match> matches = new ArrayList<Match>();
-	private static ArrayList<Pair> pairs = new ArrayList<Pair>();
-	private static ArrayList<String> master = new ArrayList<String>();
+	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
+	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
+	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
 	
 	private static Scanner input = Utility.input;
-	
+
+	private static boolean single;
+	private static boolean odd;
+
 	private static int rounds = 0;
 	private static int games;
 	private static int extras;
@@ -27,7 +33,7 @@ public class Main {
 	private static void begin() {
 		
 		ArrayList<String> playing = Utility.read("Playing");
-		master = Utility.read("Master");
+		master = Utility.read(fileName);
 		
 		for(String name: playing){
 			String[] split = name.split("\t");
@@ -66,9 +72,15 @@ public class Main {
 	//Extra players
 	private static void extras(){
 		
+		if (extras >= 2){
+			single = true;
+		}
+		if (extras % 2 == 1){
+			odd = true;
+		}
+
 		//Choose Extra People
 		for (int extra = 0; extra < extras; extra++) {
-			
 			Player player = pick(Type.Out);
 			sidelines.add(player);
 			pool.remove(player);
@@ -125,9 +137,23 @@ public class Main {
 				}
 
 			}while(!unique);
+			if (single){
+				singles();
+			}
 		}
 	}
 	
+	private static void singles(){
+
+		Player first = pick(Type.Sideline);
+		Player second = pick(Type.Sideline);
+	
+		Match match = new Match(first,second);
+		matches.add(match);
+
+	}
+
+
 	//Randomly pick from type
 	private static Player pick(Type type) {
 
@@ -143,6 +169,10 @@ public class Main {
 			num = rand.nextInt(out.size());
 			picked = out.get(num);
 			out.remove(picked);
+		} else if (type == Type.Sideline) {
+			num = rand.nextInt(sidelines.size());
+			picked = sidelines.get(num);
+			sidelines.remove(picked);
 		}
 
 		return picked;
@@ -378,7 +408,6 @@ public class Main {
 				//go back to main menu
 			}
 		}
-
 	}
 	
 	private static void end() {
@@ -386,10 +415,10 @@ public class Main {
 			replace(player);
 		}
 		
-		Utility.write("", "Master" , false);
+		Utility.write("", fileName , false);
 		for(String line: master){
 			System.out.println(line);
-			Utility.write(line + "\n", "Master" , true);
+			Utility.write(line + "\n", fileName , true);
 		}
 	}
 	
@@ -407,7 +436,6 @@ public class Main {
 		}
 		System.out.println("9. Save to Master");
 	}
-	
 	public static void main(String[] args) throws FileNotFoundException {
 
 		begin();

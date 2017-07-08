@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Utility {
-
+	//Random functions that arn't specificially for this program
 	public static Scanner input = new Scanner(System.in);
 	
-	public static int inputInt(){  //INTEGER ERRORS	
-			
+	public static int inputInt(){  //Checks to see if valid integer
+		
 		boolean error = true;
 		int choice = -1;
 		while (error == true)
@@ -33,7 +33,7 @@ public class Utility {
 		}
 		return choice;
 	}
-	public static int validInt(int min, int max){  //VALID INTEGER
+	public static int validInt(int min, int max){  //checks to see if between two ints
 
 		int number = 0;
 		boolean valid = false;
@@ -55,7 +55,7 @@ public class Utility {
 	
 	}
 	
-	public static boolean confirm(){
+	public static boolean confirm(){ //Asks for confirmation
 		
 		System.out.println("1. Yes");
 		System.out.println("2. No");
@@ -72,8 +72,8 @@ public class Utility {
 	}
 	
 	
-	public static ArrayList<String> read(String fileName){
-		ArrayList <String> content = new ArrayList<String>();
+	public static ArrayList<String> read(String fileName){ //read from a file
+		ArrayList <String> content = new ArrayList<String>(); 
 		BufferedReader br = null;
 		FileReader fr = null;
 
@@ -102,11 +102,11 @@ public class Utility {
 				ex.printStackTrace();
 			}
 		}
-		return content;
+		return content; //returns content in a string of lines
 	}
 	
 	public static void write(String content, String fileName, Boolean append){
-
+		//writes to a file 
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 

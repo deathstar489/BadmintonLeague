@@ -1,7 +1,7 @@
 package main;
 
 public class Pair {
-
+	//Creates a Pair
 	private Player first;
 	private Player second;
 	
