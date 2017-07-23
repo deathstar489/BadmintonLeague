@@ -4,16 +4,21 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-//Main file, main function runs once
+
+/**
+ * @author SmashCity
+ *
+ */
 public class Main {
 
+	//Change the file name, depending on which league is playing.
 	private static String fileName = "Saturday";
 	public static boolean careful = true;
 
 	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
-	private static ArrayList<Player> pool = new ArrayList<Player>(); //all people who are not sitting out
-	private static ArrayList<Player> out = new ArrayList<Player>(); //People who haven't been out
-	private static ArrayList<Player> sidelines = new ArrayList<Player>(); //People who are out that current round
+	private static ArrayList<Player> pool = new ArrayList<Player>(); //all players who are not sitting out
+	private static ArrayList<Player> out = new ArrayList<Player>(); //all players who haven't been out
+	private static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
 	
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
@@ -23,12 +28,12 @@ public class Main {
 
 	private static boolean single;
 
-	private static int rounds = 0;
-	private static int games;
-	private static int extras;
+	private static int numGames;
+	private static int numExtra;
 	
-	
-	//Read from files and create players
+	/**
+	 * Reads from "Playing" and create players.
+	 */
 	private static void begin() {
 		
 		ArrayList<String> playing = Utility.read("Playing");
@@ -43,61 +48,63 @@ public class Main {
 		}
 	}
 	
-	//Each round, distribute players
+	/**
+	 * General distribution of players for sitting out or playing.
+	 */
 	private static void round(){
 
-		rounds++;
-
+		//Get total number of players
 		int numPlayers = Player.getCount();
-		games  = numPlayers / 4;
-		extras = numPlayers % 4;
 		
-		System.out.println("Round " + rounds + ": ");
-		System.out.println();
+		numGames  = numPlayers / 4;
+		numExtra = numPlayers % 4;
 		
-		populate(Type.Pool);
+		//Populates the pool of players
+		populate(Type.POOL);
 		
-		//Find extra players
+		//Distributes players into sitting out or playing
 		extras();
-		
-		//Create Matches
 		matches();
-		
-		//Display Matches
 		display();
-		
 	}
 	
-	//Extra players
+	/**
+	 * Determines the players who will sit out or play singles.
+	 */
 	private static void extras(){
 		
-		if (extras >= 2){
+		//If there will be a singles match
+		if (numExtra >= 2){
 			single = true;
 		}
 
-		//Choose Extra People
-		for (int extra = 0; extra < extras; extra++) {
-			Player player = pick(Type.Out);
-			sidelines.add(player);
+		//Choose the people who are sitting out or playing singles.
+		for (int extra = 0; extra < numExtra; extra++) {
+			Player player = pick(Type.OUT);
+			extras.add(player);
 			pool.remove(player);
 			
-			//everyone's sat out
+			//Once everyone sat out, repopulate the Out array.
 			if (out.isEmpty()) {
-				populate(Type.Out);
-				for (Player side : sidelines){
+				populate(Type.OUT);
+				for (Player side : extras){
 					out.remove(side);
 				}
 			}
 		}
 	}
 	
-	//Matches
+	
+	/**
+	 * Distributes the players into matches.
+	 */
 	private static void matches(){
-		for (int game = 1; game < games + 1; game++) {
+		for (int game = 1; game < numGames + 1; game++) {
 
 			boolean unique = false;
 			int errors = 0;
 			do{
+				//Clears array of pairs if too many repeats
 				if(errors > 100){
 					pairs.clear();
 				}
@@ -105,15 +112,16 @@ public class Main {
 				unique = true;
 
 				//Pick four people
-				Player first = pick(Type.Pool);
-				Player second = pick(Type.Pool);
-				Player third = pick(Type.Pool);
-				Player fourth = pick(Type.Pool);
+				Player first = pick(Type.POOL);
+				Player second = pick(Type.POOL);
+				Player third = pick(Type.POOL);
+				Player fourth = pick(Type.POOL);
 
 				//Create Pairs
 				Pair one = new Pair(first, second);
 				Pair two = new Pair(third, fourth);
 
+				//Checks if it's a unique pair
 				for(Pair pair:pairs){
 					if ((one.equals(pair) || two.equals(pair)) && unique){
 						unique = false;
@@ -124,7 +132,8 @@ public class Main {
 						errors++;
 					}
 				}
-
+				
+				//Adds the unique pairs into the array so it doesn't repeat
 				if(unique){
 					pairs.add(one);
 					pairs.add(two);
@@ -133,58 +142,71 @@ public class Main {
 				}
 
 			}while(!unique);
-			if (single){
-				singles();
-			}
+			
+			//Singles game
+			if (single)	singles();
 		}
 	}
 	
+	/**
+	 * Creates a singles game.
+	 */
 	private static void singles(){
 
-		Player first = pick(Type.Sideline);
-		Player second = pick(Type.Sideline);
+		//Pick players from extra
+		Player first = pick(Type.EXTRA);
+		Player second = pick(Type.EXTRA);
 	
+		//Creates match
 		Match match = new Match(first,second);
 		matches.add(match);
 
 	}
 
-
-	//Randomly pick from type
+	/**
+	 * Randomly chooses a Player from an array.
+	 * @param type The type of array to choose the Player from.
+	 * @return The Player picked from the array.
+	 */
 	private static Player pick(Type type) {
 
 		Random rand = new Random();
 
 		int num;
 		Player picked = null;
-		if (type == Type.Pool) {
+		if (type == Type.POOL) {
 			num = rand.nextInt(pool.size());
 			picked = pool.get(num);
 			pool.remove(picked);
-		} else if (type == Type.Out) {
+		} else if (type == Type.OUT) {
 			num = rand.nextInt(out.size());
 			picked = out.get(num);
 			out.remove(picked);
-		} else if (type == Type.Sideline) {
-			num = rand.nextInt(sidelines.size());
-			picked = sidelines.get(num);
-			sidelines.remove(picked);
+		} else if (type == Type.EXTRA) {
+			num = rand.nextInt(extras.size());
+			picked = extras.get(num);
+			extras.remove(picked);
 		}
 
 		return picked;
 	}
 
-	//Repopulate when empty
+	/**
+	 * Populates the arrays with all of the players playing.
+	 * @param type The type of array to populate
+	 */
 	private static void populate(Type type) {
 		for (Player player : players) {
-			if (type == Type.Pool)
+			if (type == Type.POOL)
 				pool.add(player);
-			else if (type == Type.Out)
+			else if (type == Type.OUT)
 				out.add(player);
 		}
 	}
 
-	//Next round
+	/**
+	 * Starts the next round if all games are finished.
+	 */
 	private static void next() {
 		boolean finished = true;
 		
@@ -212,14 +234,23 @@ public class Main {
 		}
 	}
 	
+	
+	/**
+	 * Displays all of the players currently playing.
+	 */
 	private static void view() {
 		System.out.println();
+		System.out.println("Number of Players: " + Player.getCount());
 		for(Player player: players){
 			player.print();
 		}
 		System.out.println();
 	}
 	
+	
+	/**
+	 * Add a player.
+	 */
 	private static void add() {
 		
 		System.out.print("First Name:");
@@ -241,6 +272,11 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Finds  Player in the "Master" file and adds it.
+	 * @param first The first name of the Player.
+	 * @param last The last name of the Player.
+	 */
 	private static void find(String first, String last){
 
 		boolean found = false;
@@ -264,6 +300,13 @@ public class Main {
 			players.add(new Player(first, last));
 		}
 	}
+	
+	
+	/**
+	 * Adds the player to the master
+	 * @param first The first name of the Player.
+	 * @param last The last name of the Player.
+	 */
 	private static void add(String first, String last) {
 		String line = first + "\t" + last + "\t0\t0";
 		master.add(line);
@@ -307,11 +350,11 @@ public class Main {
 	private static void display() {
 
 		//Display Extra People
-		if (!sidelines.isEmpty()) {
+		if (!extras.isEmpty()) {
 			System.out.println("-------------------------------------");
 			System.out.println("The following people sit out:");
 			System.out.println();
-			for (Player player: sidelines) {
+			for (Player player: extras) {
 				System.out.println(player);
 			}
 			System.out.println();
@@ -364,7 +407,7 @@ public class Main {
 			for(Match match: matches){
 				match.swap(player1, player2);
 			}
-			for(Player player: sidelines){
+			for(Player player: extras){
 				if(player.equals(player1)){
 					player = player2;
 				}
@@ -489,10 +532,11 @@ public class Main {
 		}
 		System.out.println("9. Save to " + fileName);
 	}
+	
 	public static void main(String[] args) {
 
 		begin();
-		populate(Type.Out);
+		populate(Type.OUT);
 		input = new Scanner(System.in);
 		
 		while(true){
