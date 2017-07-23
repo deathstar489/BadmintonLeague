@@ -7,7 +7,8 @@ import java.util.Scanner;
 //Main file, main function runs once
 public class Main {
 
-	private static String fileName = "Master";
+	private static String fileName = "Saturday";
+	public static boolean careful = true;
 
 	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
 	private static ArrayList<Player> pool = new ArrayList<Player>(); //all people who are not sitting out
@@ -25,7 +26,7 @@ public class Main {
 	private static int rounds = 0;
 	private static int games;
 	private static int extras;
-	public static boolean careful = false;
+	
 	
 	//Read from files and create players
 	private static void begin() {
