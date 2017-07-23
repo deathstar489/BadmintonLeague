@@ -1,6 +1,5 @@
 package main;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -12,7 +11,7 @@ public class Main {
 
 	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
 	private static ArrayList<Player> pool = new ArrayList<Player>(); //all people who are not sitting out
-	private static ArrayList<Player> out = new ArrayList<Player>(); //People who havent been out
+	private static ArrayList<Player> out = new ArrayList<Player>(); //People who haven't been out
 	private static ArrayList<Player> sidelines = new ArrayList<Player>(); //People who are out that current round
 	
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
@@ -22,7 +21,6 @@ public class Main {
 	private static Scanner input = Utility.input;
 
 	private static boolean single;
-	private static boolean odd;
 
 	private static int rounds = 0;
 	private static int games;
@@ -74,9 +72,6 @@ public class Main {
 		
 		if (extras >= 2){
 			single = true;
-		}
-		if (extras % 2 == 1){
-			odd = true;
 		}
 
 		//Choose Extra People
@@ -257,7 +252,8 @@ public class Main {
 				found = true;
 				int wins = Integer.parseInt(split1[2]);
 				int losses = Integer.parseInt(split1[3]);
-				players.add(new Player(first, last, wins, losses));
+				int ties = Integer.parseInt(split1[4]);
+				players.add(new Player(first, last, wins, losses, ties));
 			}
 			
 			
@@ -300,7 +296,8 @@ public class Main {
 			if (player.is(first, last)){
 				int wins = player.getWins();
 				int losses = player.getLosses();
-				String newLine = first + "\t" + last + "\t" + wins + "\t" + losses;
+				int ties = player.getTies();
+				String newLine = first + "\t" + last + "\t" + wins + "\t" + losses + "\t" + ties;
 				master.set(master.indexOf(line), newLine);
 			}
 		}
@@ -351,28 +348,33 @@ public class Main {
 		Player player1 = null;
 		Player player2 = null;
 		
-		
 		for(Player player: players){
 			if(player.is(first1, last1))
 				player1 = player;
 			if(player.is(first2, last2))
 				player2 = player;
 		}
-		for(Match match: matches){
-			match.swap(player1, player2);
+		
+		if(player1 == null || player2 == null){
+			System.out.println("One or more of the players you entered does not exist.");
+			swap();
 		}
-		for(Player player: sidelines){
-			if(player.equals(player1)){
-				player = player2;
+		else{
+			for(Match match: matches){
+				match.swap(player1, player2);
 			}
-			else if(player.equals(player2)){
-				player = player1;
+			for(Player player: sidelines){
+				if(player.equals(player1)){
+					player = player2;
+				}
+				else if(player.equals(player2)){
+					player = player1;
+				}
 			}
 		}
 	}
 	
 	private static void score() {
-		// TODO get input on who wins
 		
 		if(matches.size() == 0)
 			System.out.println("All matches are complete.");
@@ -387,28 +389,76 @@ public class Main {
 					System.out.println("This match is already complete");
 					score();
 				}
-				System.out.println("-------------------------------------");
-				System.out.println();
-				match.print();
-
-				if(careful){
-					System.out.println("Is this your match?");
+				else{
+					System.out.println("-------------------------------------");
 					System.out.println();
+					match.print();
 
-					if(Utility.confirm())
+					if(careful){
+						System.out.println("Is this your match?");
+						System.out.println();
+
+						if(Utility.confirm())
+							match.complete();
+						else
+							score();
+					}
+					else{
 						match.complete();
-					else
-						score();
+					}
 				}
-				else
-					match.complete();
-
 			}
 			else{
 				//go back to main menu
 			}
 		}
+		end();
 	}
+	
+	/*
+	private static void addPair(){
+		
+		System.out.println("First person to switch out:");
+		System.out.println();
+		System.out.print("First Name:");
+		String first1 = input.next();
+		
+		System.out.print("Last Name:");
+		String last1 = input.next();
+		
+		System.out.println("Person to switch with?");
+		System.out.println();
+		System.out.print("First Name:");
+		String first2 = input.next();
+		
+		System.out.print("Last Name:");
+		String last2 = input.next();
+		
+		Player player1 = null;
+		Player player2 = null;
+		
+		for(Player player: players){
+			if(player.is(first1, last1))
+				player1 = player;
+			if(player.is(first2, last2))
+				player2 = player;
+		}
+		
+		if(player1 == null){
+			System.out.println(first1 + " " + last1 + " isn't a player. Would you like to add him?");
+			if(Utility.confirm()){
+				find(first1,last1);
+			}
+		}
+		
+	}
+	
+	
+	private static void removePair(){
+		
+	}
+	*/
+	
 	
 	private static void end() {
 		for(Player player: players){
@@ -417,7 +467,7 @@ public class Main {
 		
 		Utility.write("", fileName , false);
 		for(String line: master){
-			System.out.println(line);
+			//System.out.println(line);
 			Utility.write(line + "\n", fileName , true);
 		}
 	}
@@ -430,13 +480,15 @@ public class Main {
 		System.out.println("2. Add a player");
 		System.out.println("3. Remove a player");
 		System.out.println("4. Swap two players");
+		//System.out.println("5. Create Pairs");
+		//System.out.println("6. Remove Pairs");
 		if(!matches.isEmpty()){
 			System.out.println("5. Submit a score");
 			System.out.println("6. View matches");
 		}
-		System.out.println("9. Save to Master");
+		System.out.println("9. Save to " + fileName);
 	}
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) {
 
 		begin();
 		populate(Type.Out);
@@ -449,14 +501,16 @@ public class Main {
 			int selection = Utility.validInt(0,9);
 
 			switch(selection){
-				case 0:	next();		break;
-				case 1:	view();		break;
-				case 2: add();		break;
-				case 3: remove();	break;
-				case 4: swap();		break;
-				case 5: score();	break;
-				case 6: display();	break;
-				case 9: end();		break;
+				case 0:	next();			break;
+				case 1:	view();			break;
+				case 2: add();			break;
+				case 3: remove();		break;
+				case 4: swap();			break;
+				//case 5: addPair();		break;
+				//case 6: removePair();	break;
+				case 5: score();		break;
+				case 6: display();		break;
+				case 9: end();			break;
 			}
 			System.out.println("\n\n");
 		}

@@ -58,5 +58,11 @@ public class Pair {
 		else if(second.equals(player2)){
 			second = player1;
 		}
-	}	
+	}
+
+	public void tie() {
+		first.tie();
+		second.tie();
+	}
+
 }

@@ -1,7 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-
 public class Match {
 	//Object Match, it creates a match
 	private Pair one;
@@ -45,39 +43,63 @@ public class Match {
 			System.out.println();
 			System.out.println("1. " + one + ".");
 			System.out.println("2. " + two + ".");
+			System.out.println("3. It was a tie.");
 
-			int selected = Utility.validInt(0,2);
+			int selected = Utility.validInt(0,3);
 			
 			if(selected != 0){
 				
-				Pair winner;
-				Pair loser;
-				
-				if(selected == 1){
-					winner = one;
-					loser = two;
+				if(selected == 3){ //ties
+					if(Main.careful){
+						System.out.println("You selected a tie.");
+						System.out.println("Are you sure it was a tie?");
+						System.out.println();					
+						if(Utility.confirm()){
+							one.tie();
+							two.tie();
+							setFinished(true);
+						}
+						else{
+							complete();
+						}
+					}
+					else{
+						one.tie();
+						two.tie();
+						setFinished(true);
+					}
 				}
 				else{
-					winner = two;
-					loser = one;
-				}
-				if(Main.careful){
-					System.out.println("You selected " + winner + ".");
-					System.out.println("Are you sure they won?");
-					System.out.println();					
-					if(Utility.confirm()){
+					Pair winner;
+					Pair loser;
+
+					if(selected == 1){
+						winner = one;
+						loser = two;
+					}
+					else{
+						winner = two;
+						loser = one;
+					}
+
+					if(Main.careful){
+						System.out.println("You selected " + winner + ".");
+						System.out.println("Are you sure they won?");
+						System.out.println();					
+						if(Utility.confirm()){
+							winner.win();
+							loser.lose();
+							setFinished(true);
+						}
+						else{
+							complete();
+						}
+					}
+					else{
 						winner.win();
 						loser.lose();
 						setFinished(true);
 					}
-					else{
-						complete();
-					}
-				}
-				else{
-					winner.win();
-					loser.lose();
-					setFinished(true);
 				}
 			}
 		}
@@ -87,38 +109,59 @@ public class Match {
 			System.out.println("1. " + first + ".");
 			System.out.println("2. " + second + ".");
 
-			int selected = Utility.validInt(0,2);
+			int selected = Utility.validInt(0,3);
 			
 			if(selected != 0){
-				
-				Player winner;
-				Player loser;
-				
-				if(selected == 1){
-					winner = first;
-					loser = second;
+				if(selected == 3){ //ties
+					if(Main.careful){
+						System.out.println("You selected a tie.");
+						System.out.println("Are you sure it was a tie?");
+						System.out.println();					
+						if(Utility.confirm()){
+							one.tie();
+							two.tie();
+							setFinished(true);
+						}
+						else{
+							complete();
+						}
+					}
+					else{
+						one.tie();
+						two.tie();
+						setFinished(true);
+					}
 				}
 				else{
-					winner = second;
-					loser = first;
-				}
-				if(Main.careful){
-					System.out.println("You selected " + winner + ".");
-					System.out.println("Are you sure they won?");
-					System.out.println();					
-					if(Utility.confirm()){
+					Player winner;
+					Player loser;
+
+					if(selected == 1){
+						winner = first;
+						loser = second;
+					}
+					else{
+						winner = second;
+						loser = first;
+					}
+					if(Main.careful){
+						System.out.println("You selected " + winner + ".");
+						System.out.println("Are you sure they won?");
+						System.out.println();					
+						if(Utility.confirm()){
+							winner.win();
+							loser.lose();
+							setFinished(true);
+						}
+						else{
+							complete();
+						}
+					}
+					else{
 						winner.win();
 						loser.lose();
 						setFinished(true);
 					}
-					else{
-						complete();
-					}
-				}
-				else{
-					winner.win();
-					loser.lose();
-					setFinished(true);
 				}
 			}
 		}			

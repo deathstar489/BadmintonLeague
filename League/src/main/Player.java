@@ -6,7 +6,8 @@ public class Player {
 	private final String last;
 	private int wins = 0;
 	private int losses = 0;
-	private int points;
+	private int ties = 0;
+	//private int points;
 	private static int count;
 	
 	public Player(String first, String last){
@@ -19,10 +20,11 @@ public class Player {
 		this(first, null);
 	}
 
-	public Player(String first, String last, int wins, int losses) {
+	public Player(String first, String last, int wins, int losses, int ties) {
 		this(first, last);
 		this.wins = wins;
 		this.losses = losses;
+		this.ties = ties;
 	}
 	
 	public String getFirst(){
@@ -41,6 +43,10 @@ public class Player {
 		losses++;
 	}
 	
+	public void tie(){
+		ties++;
+	}
+	
 	public int getWins(){
 		return wins;
 	}
@@ -49,14 +55,17 @@ public class Player {
 		return losses;
 	}
 	
+	public int getTies(){
+		return ties;
+	}
+	
 	public void delete(){
 		count--;
 	}
 	
 	public void print(){
-		System.out.println(this + "\t wins: " + wins + "\t losses: " + losses);
+		System.out.println(this + "\t wins: " + wins + "\t losses: " + losses + "\t ties: " + ties);
 	}
-	
 	
 	public static int getCount(){
 		return count;
