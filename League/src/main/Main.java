@@ -9,6 +9,10 @@ import java.util.Scanner;
  * @author SmashCity
  *
  */
+/**
+ * @author SmashCity
+ *
+ */
 public class Main {
 
 	//Change the file name, depending on which league is playing.
@@ -142,10 +146,9 @@ public class Main {
 				}
 
 			}while(!unique);
-			
-			//Singles game
-			if (single)	singles();
 		}
+		//Singles game
+		if (single)	singles();
 	}
 	
 	/**
@@ -172,21 +175,17 @@ public class Main {
 
 		Random rand = new Random();
 
-		int num;
-		Player picked = null;
+		ArrayList<Player> array = null;
 		if (type == Type.POOL) {
-			num = rand.nextInt(pool.size());
-			picked = pool.get(num);
-			pool.remove(picked);
+			array = pool;
 		} else if (type == Type.OUT) {
-			num = rand.nextInt(out.size());
-			picked = out.get(num);
-			out.remove(picked);
+			array = out;
 		} else if (type == Type.EXTRA) {
-			num = rand.nextInt(extras.size());
-			picked = extras.get(num);
-			extras.remove(picked);
+			array = extras;
 		}
+		int num = rand.nextInt(array.size());
+		Player picked = array.get(num);
+		array.remove(picked);
 
 		return picked;
 	}
@@ -228,7 +227,7 @@ public class Main {
 				if (!match.finished()){
 					System.out.println("Match " + (matches.indexOf(match)+1) + ":");
 					System.out.println();
-					match.print();
+					match.display();
 				}
 			}
 		}
@@ -236,7 +235,7 @@ public class Main {
 	
 	
 	/**
-	 * Displays all of the players currently playing.
+	 * Displays all of the Players currently playing.
 	 */
 	private static void view() {
 		System.out.println();
@@ -303,7 +302,7 @@ public class Main {
 	
 	
 	/**
-	 * Adds the player to the master
+	 * Adds the Player to the master.
 	 * @param first The first name of the Player.
 	 * @param last The last name of the Player.
 	 */
@@ -312,7 +311,9 @@ public class Main {
 		master.add(line);
 	}
 	
-
+	/**
+	 * Removes a player.
+	 */
 	private static void remove() {
 		
 		System.out.print("First Name:");
@@ -324,14 +325,20 @@ public class Main {
 		Player delete = null;
 		for(Player player:players)
 			if(player.is(first, last)){
-				replace(player);
+				update(player);
 				delete = player;
 			}
+		
+		//Reduces the player count.
 		delete.delete();
 		players.remove(delete);
 	}
 
-	private static void replace(Player player) {
+	/**
+	 * Updates the Player from "Master". (Takes old player and replaces it with updated version)
+	 * @param player The player to update.
+	 */
+	private static void update(Player player) {
 		
 		for(String line: master){
 			String[] split = line.split("\t");
@@ -347,6 +354,9 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Displays the matches and extras.
+	 */
 	private static void display() {
 
 		//Display Extra People
@@ -367,13 +377,16 @@ public class Main {
 			int num = matches.indexOf(match)+1;
 			System.out.println("Match " + num + ":");
 			System.out.println();
-			match.print();
+			match.display();
 		}
 	}
 	
+	/**
+	 * Swaps two Players.
+	 */
 	private static void swap() {
 			
-		System.out.println("First person to switch out:");
+		System.out.println("First person to switch:");
 		System.out.println();
 		System.out.print("First Name:");
 		String first1 = input.next();
@@ -408,16 +421,23 @@ public class Main {
 				match.swap(player1, player2);
 			}
 			for(Player player: extras){
+
+				//Adds other player to the array and removes old player if old player is sitting out.
 				if(player.equals(player1)){
-					player = player2;
+					extras.add(player2);
+					extras.remove(player);
 				}
 				else if(player.equals(player2)){
-					player = player1;
+					extras.add(player1);
+					extras.remove(player);
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Submitting a score.
+	 */
 	private static void score() {
 		
 		if(matches.size() == 0)
@@ -436,7 +456,7 @@ public class Main {
 				else{
 					System.out.println("-------------------------------------");
 					System.out.println();
-					match.print();
+					match.display();
 
 					if(careful){
 						System.out.println("Is this your match?");
@@ -451,9 +471,6 @@ public class Main {
 						match.complete();
 					}
 				}
-			}
-			else{
-				//go back to main menu
 			}
 		}
 		end();
@@ -504,9 +521,12 @@ public class Main {
 	*/
 	
 	
+	/**
+	 * Uploads results to "Master" file.
+	 */
 	private static void end() {
 		for(Player player: players){
-			replace(player);
+			update(player);
 		}
 		
 		Utility.write("", fileName , false);
@@ -516,6 +536,10 @@ public class Main {
 		}
 	}
 	
+	
+	/**
+	 * Main menu.
+	 */
 	private static void menu(){
 		System.out.println("What would you like to do?");
 		System.out.println();
@@ -533,6 +557,10 @@ public class Main {
 		System.out.println("9. Save to " + fileName);
 	}
 	
+	/**
+	 * Where all the magic happens! :D
+	 * @param args No particular use...
+	 */
 	public static void main(String[] args) {
 
 		begin();
@@ -542,7 +570,6 @@ public class Main {
 		while(true){
 
 			menu();
-
 			int selection = Utility.validInt(0,9);
 
 			switch(selection){
@@ -551,7 +578,7 @@ public class Main {
 				case 2: add();			break;
 				case 3: remove();		break;
 				case 4: swap();			break;
-				//case 5: addPair();		break;
+				//case 5: addPair();	break;
 				//case 6: removePair();	break;
 				case 5: score();		break;
 				case 6: display();		break;

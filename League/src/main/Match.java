@@ -1,29 +1,50 @@
 package main;
 
-public class Match {
-	//Object Match, it creates a match
+/**
+ * @author SmashCity
+ *
+ */
+public class Match {//Object Match, it creates a match
+	
+	//Doubles
 	private Pair one;
 	private Pair two;
+	
+	//Singles
 	private Player first;
 	private Player second;
+	
 	private Mode mode;
+	
+	
 	private boolean finished = false;
 	
+	/**
+	 * Constructor for a doubles match.
+	 * @param one First pair playing in this match.
+	 * @param two Second pair playing in this match.
+	 */
 	public Match(Pair one, Pair two){
 		this.one = one;
 		this.two = two;
 		this.mode = Mode.Doubles;
 	}
-		
+	
+	/**
+	 * Constructor for a singles match.
+	 * @param one First player playing in this match.
+	 * @param two Second player playing in this match.
+	 */
 	public Match(Player first, Player second){
 		this.first = first;
 		this.second = second;
 		this.mode = Mode.Singles;
 	}
 	
-
-	public void print(){
-
+	/**
+	 * Displays the match.
+	 */
+	public void display(){
 		if (mode == Mode.Doubles){
 			System.out.printf("%-20s %-20s\n", one.getFirst(), two.getFirst());
 			System.out.println("     &        vs          &");
@@ -36,6 +57,9 @@ public class Match {
 		System.out.println("-------------------------------------");
 	}
 	
+	/**
+	 * Completes a match. (Submitting a score)
+	 */
 	public void complete(){
 		
 		if (mode == Mode.Doubles){
@@ -168,6 +192,11 @@ public class Match {
 		
 	}
 	
+	/**
+	 * Swaps two Players.
+	 * @param player1 The first player to swap.
+	 * @param player2 The second player to swap.
+	 */
 	public void swap(Player player1, Player player2){
 		
 		if(mode == Mode.Doubles){
@@ -190,10 +219,19 @@ public class Match {
 		}
 	}
 	
+	
+	/**
+	 * Setter for whether or not the match is finished.
+	 * @param finished If the match is completed or not.
+	 */
 	public void setFinished(boolean finished){
 		this.finished = finished;
 	}
 	
+	/**
+	 * Shows whether or not the match is finished.
+	 * @return true if match is completed.
+	 */
 	public boolean finished(){
 		return finished;
 	}
