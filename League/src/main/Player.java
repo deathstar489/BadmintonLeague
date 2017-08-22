@@ -7,7 +7,8 @@ public class Player {
 	private int wins = 0;
 	private int losses = 0;
 	private int ties = 0;
-	//private int points;
+	private int points = 0;
+	private int games = 0;
 	private static int count;
 	
 	public Player(String first, String last){
@@ -25,6 +26,8 @@ public class Player {
 		this.wins = wins;
 		this.losses = losses;
 		this.ties = ties;
+		setPoints();
+		setGames();
 	}
 	
 	public String getFirst(){
@@ -59,20 +62,44 @@ public class Player {
 		return ties;
 	}
 	
+	public int getPoints() {
+		return points;
+	}
+	
+	public int getGames() {
+		return games;
+	}
 	public void delete(){
 		count--;
 	}
 	
-	public void print(){
-		System.out.println(this + "\t wins: " + wins + "\t losses: " + losses + "\t ties: " + ties);
+	public void stats(){
+		System.out.printf("%-15s %-15s\n", this, "\t points: " + points + "\t wins: " + wins + "\t losses: " + losses + "\t ties: " + ties + "\t games: " + games);
+	}
+	
+//	public void points(){
+//		System.out.printf("%-15s %-15s\n", this, "\t points: " + points);
+//	}
+	
+	public String toLine() {
+		String line = this + "\t" + wins + "\t" + losses + "\t" + ties;
+		return line;
 	}
 	
 	public static int getCount(){
 		return count;
 	}
+	
 	public boolean is(String first, String last){
 		boolean same = false;
-		if(this.first.equals(first) && this.last.equals(last))
+		if(getFirst().equals(first) && getLast().equals(last))
+			same = true;
+		return same;
+	}
+	
+	public boolean is(Player player){
+		boolean same = false;
+		if(getFirst().equals(player.getFirst()) && getLast().equals(player.getLast()))
 			same = true;
 		return same;
 	}
@@ -80,7 +107,25 @@ public class Player {
 	public String toString(){
 		return first + " " + last;
 	}
-	
-	
 
+	public void combine(Player player) {
+		wins += player.getWins();
+		losses += player.getLosses();
+		ties += player.getTies();
+		setPoints();
+		setGames();
+		count--;
+	}
+	
+	private void setPoints() {
+		points = 3*wins;
+		points += 2*ties;
+		points += 1*losses;
+	}
+	
+	private void setGames() {
+		games = wins;
+		games += ties;
+		games += losses;
+	}
 }

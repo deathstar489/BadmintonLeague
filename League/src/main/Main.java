@@ -237,11 +237,11 @@ public class Main {
 	/**
 	 * Displays all of the Players currently playing.
 	 */
-	private static void view() {
+	private static void viewPlayers() {
 		System.out.println();
 		System.out.println("Number of Players: " + Player.getCount());
 		for(Player player: players){
-			player.print();
+			player.stats();
 		}
 		System.out.println();
 	}
@@ -295,20 +295,11 @@ public class Main {
 			
 		}
 		if(!found){
-			add(first,last);
+			String line = first + "\t" + last + "\t0\t0\t0";
+			master.add(line);
+			Utility.write(line + "\n", fileName , true);
 			players.add(new Player(first, last));
 		}
-	}
-	
-	
-	/**
-	 * Adds the Player to the master.
-	 * @param first The first name of the Player.
-	 * @param last The last name of the Player.
-	 */
-	private static void add(String first, String last) {
-		String line = first + "\t" + last + "\t0\t0";
-		master.add(line);
 	}
 	
 	/**
@@ -385,23 +376,41 @@ public class Main {
 	 * Swaps two Players.
 	 */
 	private static void swap() {
+		
+		
+		String first1;
+		String last1;
+		String first2;
+		String last2;
+		
+		boolean swap = false;
+		do {
+			System.out.println("First person to switch:");
+			System.out.println();
+			System.out.print("First Name:");
+			first1 = input.next();
+
+			System.out.print("Last Name:");
+			last1 = input.next();
+
+			System.out.println("Person to switch with?");
+			System.out.println();
+			System.out.print("First Name:");
+			first2 = input.next();
+
+			System.out.print("Last Name:");
+			last2 = input.next();
+
+			if(careful){
+				System.out.println("Are you sure you want to swap " + first1 + " " + last1 + " and " + first2 + " " + last2 + "?");
+				System.out.println("NOTE: If you accidentally pressed swap, swap two of the same players");
+				System.out.println();
+
+				if(!Utility.confirm());
+					swap = true;
+			}
+		}while(swap);
 			
-		System.out.println("First person to switch:");
-		System.out.println();
-		System.out.print("First Name:");
-		String first1 = input.next();
-		
-		System.out.print("Last Name:");
-		String last1 = input.next();
-		
-		System.out.println("Person to switch with?");
-		System.out.println();
-		System.out.print("First Name:");
-		String first2 = input.next();
-		
-		System.out.print("Last Name:");
-		String last2 = input.next();
-		
 		Player player1 = null;
 		Player player2 = null;
 		
@@ -473,7 +482,7 @@ public class Main {
 				}
 			}
 		}
-		end();
+		save();
 	}
 	
 	/*
@@ -524,7 +533,8 @@ public class Main {
 	/**
 	 * Uploads results to "Master" file.
 	 */
-	private static void end() {
+	private static void save() {
+		master = Utility.read(fileName);
 		for(Player player: players){
 			update(player);
 		}
@@ -554,6 +564,8 @@ public class Main {
 			System.out.println("5. Submit a score");
 			System.out.println("6. View matches");
 		}
+		System.out.println("7. Manage Master File And Scores.");
+		System.out.println("8. End Game.");
 		System.out.println("9. Save to " + fileName);
 	}
 	
@@ -565,24 +577,26 @@ public class Main {
 
 		begin();
 		populate(Type.OUT);
-		input = new Scanner(System.in);
 		
-		while(true){
+		boolean running = true;
+		while(running){
 
 			menu();
 			int selection = Utility.validInt(0,9);
 
 			switch(selection){
-				case 0:	next();			break;
-				case 1:	view();			break;
-				case 2: add();			break;
-				case 3: remove();		break;
-				case 4: swap();			break;
-				//case 5: addPair();	break;
-				//case 6: removePair();	break;
-				case 5: score();		break;
-				case 6: display();		break;
-				case 9: end();			break;
+				case 0:	next();				break;
+				case 1:	viewPlayers();		break;
+				case 2: add();				break;
+				case 3: remove();			break;
+				case 4: swap();				break;
+				case 5: score();			break;
+				case 6: display();			break;
+				case 7: Scores.main();
+						master = Utility.read(fileName);	break;
+				case 8: running = false;	break;
+				case 9: save();				break;
+				default: System.out.println("Invalid Entry");
 			}
 			System.out.println("\n\n");
 		}
