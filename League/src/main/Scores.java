@@ -2,6 +2,10 @@ package main;
 
 import java.util.ArrayList;
 
+/**
+ * @author Jiashu Wang
+ *
+ */
 public class Scores {
 
 	private static ArrayList<Player> players = new ArrayList<Player>();

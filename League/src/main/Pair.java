@@ -1,5 +1,9 @@
 package main;
 
+/**
+ * @author Jiashu Wang
+ *
+ */
 public class Pair {
 	//Creates a Pair
 	private Player first;

@@ -1,7 +1,7 @@
 package main;
 
 /**
- * @author SmashCity
+ * @author Jiashu Wang
  *
  */
 public class Match {//Object Match, it creates a match

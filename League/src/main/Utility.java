@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * @author Jiashu Wang
+ *
+ */
 public class Utility {
 	//Random functions that arn't specificially for this program
 	public static Scanner input = new Scanner(System.in);

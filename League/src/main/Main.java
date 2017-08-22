@@ -6,11 +6,7 @@ import java.util.Scanner;
 
 
 /**
- * @author SmashCity
- *
- */
-/**
- * @author SmashCity
+ * @author Jiashu Wang
  *
  */
 public class Main {

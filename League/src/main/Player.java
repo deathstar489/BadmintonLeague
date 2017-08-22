@@ -1,5 +1,9 @@
 package main;
 
+/**
+ * @author Jiashu Wang
+ *
+ */
 public class Player {
 	//Creates a Player
 	private final String first;
