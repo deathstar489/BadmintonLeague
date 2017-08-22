@@ -76,12 +76,13 @@ public class Scores {
 				Player one = players.get(x);
 				Player two = players.get(y);
 				
-				if (   (type == Sort.WINS	&& (one.getWins() < two.getWins()))
+				if (   (type == Sort.FIRST	&& (0 < one.toString().compareToIgnoreCase(two.toString())))
+					|| (type == Sort.LAST	&& (0 < one.reverse().compareToIgnoreCase(two.reverse())))
+					|| (type == Sort.POINTS	&& (one.getPoints() < two.getPoints()))
+					|| (type == Sort.WINS	&& (one.getWins() < two.getWins()))
 					|| (type == Sort.LOSSES	&& (one.getLosses() < two.getLosses()))
 					|| (type == Sort.TIES	&& (one.getTies() < two.getTies()))
-					|| (type == Sort.POINTS	&& (one.getPoints() < two.getPoints()))
-					|| (type == Sort.GAMES	&& (one.getGames() < two.getGames()))
-					|| (type == Sort.ALPHA	&& (0 < one.toString().compareToIgnoreCase(two.toString())))) {
+					|| (type == Sort.GAMES	&& (one.getGames() < two.getGames()))) {
 					
 					sorted = false;
 					players.set(x, two);
@@ -118,12 +119,13 @@ public class Scores {
 		System.out.println();
 		System.out.println("0. Go back to main");
 		System.out.println("1. View stats");
-		System.out.println("2. Sort by wins");
-		System.out.println("3. Sort by losses");
-		System.out.println("4. Sort by ties");
-		System.out.println("5. Sort by points");
-		System.out.println("6. Sort by games");
-		System.out.println("7. Sort by alphabet");
+		System.out.println("2. Sort by First Name");
+		System.out.println("3. Sort by Last Name");
+		System.out.println("4. Sort by Points");
+		System.out.println("5. Sort by Wins");
+		System.out.println("6. Sort by Losses");
+		System.out.println("7. Sort by Ties");
+		System.out.println("8. Sort by Games");
 		System.out.println("9. Save to " + fileName);
 	}
 	
@@ -138,19 +140,21 @@ public class Scores {
 		while(running){
 
 			menu();
-			int selection = Utility.validInt(0,9);
+			int selection = Utility.validInt(0,10);
 
 			switch(selection){
 				case 0: running = false;	break;
 				case 1: display();			break;
-				case 2: sort(Sort.WINS);	break;
-				case 3: sort(Sort.LOSSES);	break;
-				case 4: sort(Sort.TIES);	break;
-				case 5: sort(Sort.POINTS);	break;
-				case 6: sort(Sort.GAMES);	break;
-				case 7: sort(Sort.ALPHA);	break;
+				case 2: sort(Sort.FIRST);	break;
+				case 3: sort(Sort.LAST);	break;
+				case 4: sort(Sort.POINTS);	break;
+				case 5: sort(Sort.WINS);	break;
+				case 6: sort(Sort.LOSSES);	break;
+				case 7: sort(Sort.TIES);	break;
+				case 8: sort(Sort.GAMES);	break;
 				case 9: save();				break;
-				default: System.out.println("Invalid Entry.");   
+				case 10: count();			break;
+				default: System.out.println("Invalid Entry.");
 			}
 			System.out.println("\n\n");
 		}
@@ -161,5 +165,19 @@ public class Scores {
 		}
 		players.removeAll(players);
 		count = 0;
+	}
+	
+	private static void count() {
+		int wins = 0;
+		int losses = 0;
+		int ties = 0;
+		for(Player player: players) {
+			wins += player.getWins();
+			losses += player.getLosses();
+			ties += player.getTies();
+		}
+		System.out.println("Wins: " + wins);
+		System.out.println("Losses: " + losses);
+		System.out.println("Ties: " + ties);
 	}
 }

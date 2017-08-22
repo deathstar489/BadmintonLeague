@@ -9,7 +9,7 @@ public class Player {
 	private int ties = 0;
 	private int points = 0;
 	private int games = 0;
-	private static int count;
+	private static int count = 0;
 	
 	public Player(String first, String last){
 		this.first = first;
@@ -73,21 +73,29 @@ public class Player {
 		count--;
 	}
 	
-	public void stats(){
-		System.out.printf("%-15s %-15s\n", this, "\t points: " + points + "\t wins: " + wins + "\t losses: " + losses + "\t ties: " + ties + "\t games: " + games);
-	}
-	
-//	public void points(){
-//		System.out.printf("%-15s %-15s\n", this, "\t points: " + points);
-//	}
-	
-	public String toLine() {
-		String line = this + "\t" + wins + "\t" + losses + "\t" + ties;
-		return line;
-	}
-	
 	public static int getCount(){
 		return count;
+	}
+	
+	private void setPoints() {
+		points  = 3*wins;
+		points += 2*ties;
+		points += 1*losses;
+	}
+	
+	private void setGames() {
+		games  = wins;
+		games += ties;
+		games += losses;
+	}
+	
+	public void combine(Player player) {
+		wins += player.getWins();
+		losses += player.getLosses();
+		ties += player.getTies();
+		setPoints();
+		setGames();
+		count--;
 	}
 	
 	public boolean is(String first, String last){
@@ -103,29 +111,21 @@ public class Player {
 			same = true;
 		return same;
 	}
+
+	public void stats(){
+		System.out.printf("%-22s %-15s\n", first + "     \t" + last, "\t points: " + points + "\t wins: " + wins + "\t losses: " + losses + "\t ties: " + ties + "\t games: " + games);
+	}
+	
+	public String toLine() {
+		return first + "\t" + last + "\t" + wins + "\t" + losses + "\t" + ties;
+	}
+	
+	public String reverse() {
+		return last + " " + first;
+	}
 	
 	public String toString(){
 		return first + " " + last;
 	}
 
-	public void combine(Player player) {
-		wins += player.getWins();
-		losses += player.getLosses();
-		ties += player.getTies();
-		setPoints();
-		setGames();
-		count--;
-	}
-	
-	private void setPoints() {
-		points = 3*wins;
-		points += 2*ties;
-		points += 1*losses;
-	}
-	
-	private void setGames() {
-		games = wins;
-		games += ties;
-		games += losses;
-	}
 }
