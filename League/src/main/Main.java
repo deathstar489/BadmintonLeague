@@ -87,7 +87,7 @@ public class Main {
 			//Once everyone sat out, repopulate the Out array.
 			if (out.isEmpty()) {
 				populate(Type.OUT);
-				for (Player side : extras){
+				for (Player side : extras){ 
 					out.remove(side); 
 				}
 			}
