@@ -88,7 +88,7 @@ public class Main {
 			if (out.isEmpty()) {
 				populate(Type.OUT);
 				for (Player side : extras){
-					out.remove(side);
+					out.remove(side); 
 				}
 			}
 		}
