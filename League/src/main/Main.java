@@ -23,6 +23,7 @@ public class Main {
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
 	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
+	private static ArrayList<String> points = new ArrayList<String>(); //array of strings of every line in points (everyone in the league)
 	
 	private static Scanner input = Utility.input;
 
@@ -38,6 +39,7 @@ public class Main {
 		
 		ArrayList<String> playing = Utility.read("Playing");
 		master = Utility.read(fileName);
+		points = Utility.read("Points");
 		
 		for(String name: playing){
 			String[] split = name.split("\t");
@@ -237,11 +239,10 @@ public class Main {
 		System.out.println();
 		System.out.println("Number of Players: " + Player.getCount());
 		for(Player player: players){
-			player.stats();
+			System.out.println(player);
 		}
 		System.out.println();
 	}
-	
 	
 	/**
 	 * Add a player.
@@ -291,10 +292,13 @@ public class Main {
 			
 		}
 		if(!found){
-			String line = first + "\t" + last + "\t0\t0\t0";
-			master.add(line);
-			Utility.write(line + "\n", fileName , true);
-			players.add(new Player(first, last));
+			Player player = new Player(first, last);
+			
+			master.add(player.toLine());
+			points.add(player.toPoints());
+			Utility.write(player.toLine() + "\n", fileName , true);
+			
+			players.add(player);
 		}
 	}
 	
@@ -332,11 +336,8 @@ public class Main {
 			String first = split[0];
 			String last = split[1];
 			if (player.is(first, last)){
-				int wins = player.getWins();
-				int losses = player.getLosses();
-				int ties = player.getTies();
-				String newLine = first + "\t" + last + "\t" + wins + "\t" + losses + "\t" + ties;
-				master.set(master.indexOf(line), newLine);
+				master.set(master.indexOf(line), player.toLine());
+				points.set(master.indexOf(line), player.toPoints());
 			}
 		}
 	}
@@ -530,15 +531,19 @@ public class Main {
 	 * Uploads results to "Master" file.
 	 */
 	private static void save() {
-		master = Utility.read(fileName);
 		for(Player player: players){
 			update(player);
 		}
 		
 		Utility.write("", fileName , false);
+		Utility.write("", "Points", false);
 		for(String line: master){
 			//System.out.println(line);
 			Utility.write(line + "\n", fileName , true);
+		}
+		for(String line: points){
+			//System.out.println(line);
+			Utility.write(line + "\n", "Points" , true);
 		}
 	}
 	
@@ -560,7 +565,6 @@ public class Main {
 			System.out.println("5. Submit a score");
 			System.out.println("6. View matches");
 		}
-		System.out.println("7. Manage Master File And Scores.");
 		System.out.println("8. End Game.");
 		System.out.println("9. Save to " + fileName);
 	}
@@ -588,10 +592,10 @@ public class Main {
 				case 4: swap();				break;
 				case 5: score();			break;
 				case 6: display();			break;
-				case 7: Scores.main();
-						master = Utility.read(fileName);	break;
 				case 8: running = false;	break;
 				case 9: save();				break;
+				case 10: Scores.main();
+					master = Utility.read(fileName);	break;
 				default: System.out.println("Invalid Entry");
 			}
 			System.out.println("\n\n");

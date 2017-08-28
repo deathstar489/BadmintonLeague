@@ -69,7 +69,6 @@ public class Scores {
 	
 	private static void sort(Sort type) {
 		
-		
 		boolean sorted = false;
 		while(!sorted) {
 			sorted = true;

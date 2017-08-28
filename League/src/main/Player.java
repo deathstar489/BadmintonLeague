@@ -122,6 +122,11 @@ public class Player {
 	
 	public String toLine() {
 		return first + "\t" + last + "\t" + wins + "\t" + losses + "\t" + ties;
+	
+	}
+	
+	public String toPoints(){
+		return String.format("%-22s %-15s\n", first + "     \t" + last, "\t points: " + points);
 	}
 	
 	public String reverse() {
