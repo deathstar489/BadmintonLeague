@@ -85,6 +85,7 @@ public class Doubles extends Match {
 	protected void swap(Player player1, Player player2) {
 		one.swap(player1, player2);
 		two.swap(player1, player2);
+		text();
 	}
 	
 	protected void tie() {

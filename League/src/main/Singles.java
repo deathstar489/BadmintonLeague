@@ -71,8 +71,21 @@ public class Singles extends Match {
 	}
 
 	protected void swap(Player player1, Player player2) {
-		Pair pair = new Pair(first,second);
-		pair.swap(player1, player2);
+
+		if(first.equals(player1)){
+			first = player2;
+		}
+		else if(first.equals(player2)){
+			first = player1;
+		}
+		else if(second.equals(player1)){
+			second = player2;
+		}
+		else if(second.equals(player2)){
+			second = player1;
+		}
+		
+		text();
 	}
 	
 	protected void tie() {

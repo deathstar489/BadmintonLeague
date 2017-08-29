@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,10 +19,13 @@ import javax.swing.SwingConstants;
 public abstract class Match extends JPanel implements ActionListener{//Object Match, it creates a match
 
 	private Font font = new Font("Arial", Font.BOLD, 30);
-	protected Window frame;
 	
 	private boolean finished = false;
 	protected static int count = 0;
+	
+	protected Window frame;
+	
+	private JButton[] buttons = new JButton[] {new JButton(), new JButton(), new JButton()};
 	
 	/**
 	 * Panel manager for GUI.
@@ -38,26 +40,20 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		
 		label.setFont(font);
 		
-		//Layout for label
+		//Layout for Label
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 3;
 		gbc.gridy = 1;
 		
 		add(label, gbc);
+				
+		//Button Text
+		text();
 		
-		//Buttons
-		
-		JButton[] array = new JButton[] {
-				new JButton("<html><center>" + getGame("First").replaceAll("\\n", "<br>") + "</center></html>"),
-				new JButton("<html><center>Tie</center></html>"),
-				new JButton("<html><center>" + getGame("Second").replaceAll("\\n", "<br>") + "</center></html>")
-		};
-		
-		JButton hello = new JButton();
 		//Action References
-		array[0].setActionCommand("First");
-		array[1].setActionCommand("Tie");
-		array[2].setActionCommand("Second");
+		buttons[0].setActionCommand("First");
+		buttons[1].setActionCommand("Tie");
+		buttons[2].setActionCommand("Second");
 		
 		//Layout for Buttons
 		gbc.gridwidth = 1;
@@ -66,16 +62,23 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		gbc.insets = new Insets(5,5,5,5);  //padding
 
 		//For all buttons...
-		for(JButton button: array) {
+		for(JButton button: buttons) {
 			button.setFont(font);
 			button.addActionListener(this);
 			
 			add(button, gbc);
 		}
 		
-		frame = new Window(this, count);
+		frame = new Window(this);
 	}
 
+	protected void text() {
+		buttons[0].setText("<html><center>" + getGame("First").replaceAll("\\n", "<br>") + "</center></html>");
+		buttons[1].setText("<html><center>Tie</center></html>");
+		buttons[2].setText("<html><center>" + getGame("Second").replaceAll("\\n", "<br>") + "</center></html>");
+
+	}
+	
 	/**
 	 * Takes the name of the Pair/Player selected.
 	 * @param side Which Pair/player to get the name of.
