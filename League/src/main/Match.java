@@ -1,231 +1,130 @@
 package main;
 
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 /**
  * @author Jiashu Wang
  *
  */
-public class Match {//Object Match, it creates a match
-	
-	//Doubles
-	private Pair one;
-	private Pair two;
-	
-	//Singles
-	private Player first;
-	private Player second;
-	
-	private Mode mode;
-	
+public abstract class Match extends JPanel implements ActionListener{//Object Match, it creates a match
+
+	private Font font = new Font("Arial", Font.BOLD, 30);
+	protected Window frame;
 	
 	private boolean finished = false;
+	protected static int count = 0;
 	
 	/**
-	 * Constructor for a doubles match.
-	 * @param one First pair playing in this match.
-	 * @param two Second pair playing in this match.
+	 * Panel manager for GUI.
 	 */
-	public Match(Pair one, Pair two){
-		this.one = one;
-		this.two = two;
-		this.mode = Mode.Doubles;
-	}
-	
-	/**
-	 * Constructor for a singles match.
-	 * @param one First player playing in this match.
-	 * @param two Second player playing in this match.
-	 */
-	public Match(Player first, Player second){
-		this.first = first;
-		this.second = second;
-		this.mode = Mode.Singles;
-	}
-	
-	/**
-	 * Displays the match.
-	 */
-	public void display(){
-		if (mode == Mode.Doubles){
-			System.out.printf("%-20s %-20s\n", one.getFirst(), two.getFirst());
-			System.out.println("     &        vs          &");
-			System.out.printf("%-20s %-20s\n", one.getSecond(), two.getSecond());
-		}
-		else{
-			System.out.println(first + "      vs      " + second);
-		}
-		System.out.println();
-		System.out.println("-------------------------------------");
-	}
-	
-	/**
-	 * Completes a match. (Submitting a score)
-	 */
-	public void complete(){
+	protected void panel() {
 		
-		if (mode == Mode.Doubles){
-			System.out.println("Which team won? ('0' to cancel)");
-			System.out.println();
-			System.out.println("1. " + one + ".");
-			System.out.println("2. " + two + ".");
-			System.out.println("3. It was a tie.");
-
-			int selected = Utility.validInt(0,3);
-			
-			if(selected != 0){
-				
-				if(selected == 3){ //ties
-					if(Main.careful){
-						System.out.println("You selected a tie.");
-						System.out.println("Are you sure it was a tie?");
-						System.out.println();					
-						if(Utility.confirm()){
-							one.tie();
-							two.tie();
-							setFinished(true);
-						}
-						else{
-							complete();
-						}
-					}
-					else{
-						one.tie();
-						two.tie();
-						setFinished(true);
-					}
-				}
-				else{
-					Pair winner;
-					Pair loser;
-
-					if(selected == 1){
-						winner = one;
-						loser = two;
-					}
-					else{
-						winner = two;
-						loser = one;
-					}
-
-					if(Main.careful){
-						System.out.println("You selected " + winner + ".");
-						System.out.println("Are you sure they won?");
-						System.out.println();					
-						if(Utility.confirm()){
-							winner.win();
-							loser.lose();
-							setFinished(true);
-						}
-						else{
-							complete();
-						}
-					}
-					else{
-						winner.win();
-						loser.lose();
-						setFinished(true);
-					}
-				}
-			}
-		}
-		else{
-			System.out.println("Who won? ('0' to cancel)");
-			System.out.println();
-			System.out.println("1. " + first + ".");
-			System.out.println("2. " + second + ".");
-
-			int selected = Utility.validInt(0,3);
-			
-			if(selected != 0){
-				if(selected == 3){ //ties
-					if(Main.careful){
-						System.out.println("You selected a tie.");
-						System.out.println("Are you sure it was a tie?");
-						System.out.println();					
-						if(Utility.confirm()){
-							one.tie();
-							two.tie();
-							setFinished(true);
-						}
-						else{
-							complete();
-						}
-					}
-					else{
-						one.tie();
-						two.tie();
-						setFinished(true);
-					}
-				}
-				else{
-					Player winner;
-					Player loser;
-
-					if(selected == 1){
-						winner = first;
-						loser = second;
-					}
-					else{
-						winner = second;
-						loser = first;
-					}
-					if(Main.careful){
-						System.out.println("You selected " + winner + ".");
-						System.out.println("Are you sure they won?");
-						System.out.println();					
-						if(Utility.confirm()){
-							winner.win();
-							loser.lose();
-							setFinished(true);
-						}
-						else{
-							complete();
-						}
-					}
-					else{
-						winner.win();
-						loser.lose();
-						setFinished(true);
-					}
-				}
-			}
-		}			
+		setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
 		
+		//Prompt Label
+		JLabel label = new JLabel("What were the results? (Who won?)", SwingConstants.CENTER);
+		
+		label.setFont(font);
+		
+		//Layout for label
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridy = 1;
+		
+		add(label, gbc);
+		
+		//Buttons
+		
+		JButton[] array = new JButton[] {
+				new JButton("<html><center>" + getGame("First").replaceAll("\\n", "<br>") + "</center></html>"),
+				new JButton("<html><center>Tie</center></html>"),
+				new JButton("<html><center>" + getGame("Second").replaceAll("\\n", "<br>") + "</center></html>")
+		};
+		
+		JButton hello = new JButton();
+		//Action References
+		array[0].setActionCommand("First");
+		array[1].setActionCommand("Tie");
+		array[2].setActionCommand("Second");
+		
+		//Layout for Buttons
+		gbc.gridwidth = 1;
+		gbc.gridy = 2;
+		gbc.ipadx = 100;
+		gbc.insets = new Insets(5,5,5,5);  //padding
+
+		//For all buttons...
+		for(JButton button: array) {
+			button.setFont(font);
+			button.addActionListener(this);
+			
+			add(button, gbc);
+		}
+		
+		frame = new Window(this, count);
 	}
+
+	/**
+	 * Takes the name of the Pair/Player selected.
+	 * @param side Which Pair/player to get the name of.
+	 * @return the Pair/Player selected, ready to print onto button.
+	 */
+	protected abstract String getGame(String side);
+	
+	/**
+	 * Displays the Match.
+	 */
+	protected abstract void display();
+	
+	/**
+	 * Completes a Match. (Submitting a score)
+	 */
+	protected abstract void complete();
 	
 	/**
 	 * Swaps two Players.
 	 * @param player1 The first player to swap.
 	 * @param player2 The second player to swap.
 	 */
-	public void swap(Player player1, Player player2){
-		
-		if(mode == Mode.Doubles){
-			one.swap(player1, player2);
-			two.swap(player1, player2);
+	protected abstract void swap(Player player1, Player player2);
+
+	protected abstract void tie();
+	public abstract void actionPerformed(ActionEvent e);
+	
+	protected void ties() {
+
+		if(Main.careful){
+			System.out.println("You selected a tie.");
+			System.out.println("Are you sure it was a tie?");
+			System.out.println();					
+			if(!Utility.confirm())
+				tie();
+			else
+				complete();
 		}
-		else{
-			if(first.equals(player1)){
-				first = player2;
-			}
-			else if(first.equals(player2)){
-				first = player1;
-			}
-			else if(second.equals(player1)){
-				second = player2;
-			}
-			else if(second.equals(player2)){
-				second = player1;
-			}
-		}
+		else
+			tie();
 	}
-	
-	
+
 	/**
 	 * Setter for whether or not the match is finished.
 	 * @param finished If the match is completed or not.
 	 */
-	public void setFinished(boolean finished){
+	protected void setFinished(boolean finished){
 		this.finished = finished;
+		Main.save();
 	}
 	
 	/**
@@ -235,6 +134,5 @@ public class Match {//Object Match, it creates a match
 	public boolean finished(){
 		return finished;
 	}
-	
 	
 }

@@ -23,7 +23,6 @@ public class Main {
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
 	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
-	private static ArrayList<String> points = new ArrayList<String>(); //array of strings of every line in points (everyone in the league)
 	
 	private static Scanner input = Utility.input;
 
@@ -32,6 +31,12 @@ public class Main {
 	private static int numGames;
 	private static int numExtra;
 	
+	private static void help() {
+		System.out.println("If you have any questions or concerns, "
+				+ "please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com.");
+		System.out.println("\n\n");
+	}
+	
 	/**
 	 * Reads from "Playing" and create players.
 	 */
@@ -39,7 +44,6 @@ public class Main {
 		
 		ArrayList<String> playing = Utility.read("Playing");
 		master = Utility.read(fileName);
-		points = Utility.read("Points");
 		
 		for(String name: playing){
 			String[] split = name.split("\t");
@@ -139,7 +143,7 @@ public class Main {
 				if(unique){
 					pairs.add(one);
 					pairs.add(two);
-					Match match = new Match(one,two);
+					Doubles match = new Doubles(one,two);
 					matches.add(match);
 				}
 
@@ -159,7 +163,7 @@ public class Main {
 		Player second = pick(Type.EXTRA);
 	
 		//Creates match
-		Match match = new Match(first,second);
+		Singles match = new Singles(first,second);
 		matches.add(match);
 
 	}
@@ -295,7 +299,6 @@ public class Main {
 			Player player = new Player(first, last);
 			
 			master.add(player.toLine());
-			points.add(player.toPoints());
 			Utility.write(player.toLine() + "\n", fileName , true);
 			
 			players.add(player);
@@ -337,7 +340,6 @@ public class Main {
 			String last = split[1];
 			if (player.is(first, last)){
 				master.set(master.indexOf(line), player.toLine());
-				points.set(master.indexOf(line), player.toPoints());
 			}
 		}
 	}
@@ -374,14 +376,15 @@ public class Main {
 	 */
 	private static void swap() {
 		
-		
 		String first1;
 		String last1;
 		String first2;
 		String last2;
 		
-		boolean swap = false;
+		boolean swap;
 		do {
+			swap = false;
+			System.out.println("PLEASE!!!! Don't switch two people who are already on the same team...");
 			System.out.println("First person to switch:");
 			System.out.println();
 			System.out.print("First Name:");
@@ -403,7 +406,7 @@ public class Main {
 				System.out.println("NOTE: If you accidentally pressed swap, swap two of the same players");
 				System.out.println();
 
-				if(!Utility.confirm());
+				if(!Utility.confirm())
 					swap = true;
 			}
 		}while(swap);
@@ -479,7 +482,6 @@ public class Main {
 				}
 			}
 		}
-		save();
 	}
 	
 	/*
@@ -530,20 +532,15 @@ public class Main {
 	/**
 	 * Uploads results to "Master" file.
 	 */
-	private static void save() {
+	public static void save() {
 		for(Player player: players){
 			update(player);
 		}
 		
 		Utility.write("", fileName , false);
-		Utility.write("", "Points", false);
 		for(String line: master){
 			//System.out.println(line);
 			Utility.write(line + "\n", fileName , true);
-		}
-		for(String line: points){
-			//System.out.println(line);
-			Utility.write(line + "\n", "Points" , true);
 		}
 	}
 	
@@ -565,7 +562,7 @@ public class Main {
 			System.out.println("5. Submit a score");
 			System.out.println("6. View matches");
 		}
-		System.out.println("8. End Game.");
+		System.out.println("8. End Game");
 		System.out.println("9. Save to " + fileName);
 	}
 	
@@ -575,9 +572,10 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		help();
+		
 		begin();
 		populate(Type.OUT);
-		
 		boolean running = true;
 		while(running){
 
@@ -598,7 +596,7 @@ public class Main {
 					master = Utility.read(fileName);	break;
 				default: System.out.println("Invalid Entry");
 			}
-			System.out.println("\n\n");
+			System.out.println("\n");
 		}
 	}
 	

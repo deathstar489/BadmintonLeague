@@ -48,6 +48,10 @@ public class Pair {
 		return first + " and " + second;
 	}
 	
+	public String toLabel() {
+		return first + "\nand\n" + second;
+	}
+	
 	public void swap(Player player1, Player player2){
 		
 		if(first.equals(player1)){
