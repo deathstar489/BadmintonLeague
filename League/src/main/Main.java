@@ -47,7 +47,8 @@ public class Main {
 		System.out.println("5. Select and Drag all of those files down to \"Staged Changes\".(Bottom Left)");
 		System.out.println("6. Now under \"Commit Message\", Enter in any other relavent information that you believe to be important. (Top Right)");
 		System.out.println("6a... If you have nothing to write, then simply put the date.");
-		System.out.println("7. Now click \"Commit and Push...\". Wait for something to pop up, and click Okay.");
+		System.out.println("7. Now click \"Commit and Push...\". Wait for something to pop up, and hit \"OK\".");
+		System.out.println("7a... If you clicked \"Commit\" instead, then you are a BAKA!");
 		
 		System.out.println("If you have any questions or concerns, "
 				+ "please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com.");
