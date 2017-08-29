@@ -73,6 +73,7 @@ public class Player {
 	public int getGames() {
 		return games;
 	}
+	
 	public void delete(){
 		count--;
 	}

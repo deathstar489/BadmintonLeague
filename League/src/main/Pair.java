@@ -49,7 +49,7 @@ public class Pair {
 	}
 	
 	public String toLabel() {
-		return first + "\nand\n" + second;
+		return first + "\n&\n" + second;
 	}
 	
 	public void swap(Player player1, Player player2){

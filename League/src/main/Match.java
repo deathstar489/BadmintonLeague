@@ -35,9 +35,12 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		//Prompt Label
-		JLabel label = new JLabel("What were the results? (Who won?)", SwingConstants.CENTER);
+		//Labels
+		JLabel number = new JLabel(" Match " + count + ":");
+		JLabel label = new JLabel("What were the results? (Who Won?)", SwingConstants.CENTER);
 		
+		//Fonts
+		number.setFont(font);
 		label.setFont(font);
 		
 		//Layout for Label
@@ -45,6 +48,8 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		gbc.gridwidth = 3;
 		gbc.gridy = 1;
 		
+		add(number, gbc);
+		gbc.gridy = 2;
 		add(label, gbc);
 				
 		//Button Text
@@ -57,7 +62,7 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		
 		//Layout for Buttons
 		gbc.gridwidth = 1;
-		gbc.gridy = 2;
+		gbc.gridy = 3;
 		gbc.ipadx = 100;
 		gbc.insets = new Insets(5,5,5,5);  //padding
 

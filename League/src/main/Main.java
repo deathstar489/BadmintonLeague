@@ -19,150 +19,191 @@ public class Main {
 	private static ArrayList<Player> pool = new ArrayList<Player>(); //all players who are not sitting out
 	private static ArrayList<Player> out = new ArrayList<Player>(); //all players who haven't been out
 	private static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
-	
+
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
 	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
-	
+
 	private static Scanner input = Utility.input;
 
 	private static boolean single;
 
 	private static int numGames;
 	private static int numExtra;
-	
+
 	private static void help() {
+
+		System.out.println("HELP WITH USING THE PROGRAM:");
+		System.out.println("\t1. First, enter the first and last names of the people that are present into the \"Playing\" file. (Separated by a tab)");
+		System.out.println("\t\t a. If you can't find the file open, look to the left and under BadmintonLeague_League > src > main. (It's near the bottom)");
+		System.out.println("\t2. Then you run the program, which you should know cause you're reading this right now.");
+		System.out.println("\t3. Simply type 0 to start the first round and go play.");
+		System.out.println("\t4. Once you're done, come back and type 6 to submit the scores.");
+		System.out.println("\t5. Once everyone is done playing, you can go back to step 3. and continue.");
+		System.out.println("\t6. Once you are tired and you're done playing for the day, Type 9, then Type 8.");
+		System.out.println("\t\t a. If you messed up and didn't save... Well... That's really too bad cause those games no longer count :P");
+		System.out.println("\t\t b. Just Kidding, they're probably already saved, so don't worry! XD");
+		System.out.println();
+		System.out.println();
 		System.out.println("Before you start, make sure to pull:");
-		System.out.println("1. Go to the left and right click the main folder.(BadmintonLeague)");
-		System.out.println("2. Look through the options and click \"Team\". (It's near the bottom ish)");
-		System.out.println("3. Look through the options and click \"Pull\". (It's near the top ish)");
+		System.out.println("\t1. Go to the left and right click the main folder. (BadmintonLeague)");
+		System.out.println("\t2. Look through the options and click \"Team\". (It's near the bottom ish)");
+		System.out.println("\t3. Look through the options and click \"Pull\". (It's near the top ish)");
+		System.out.println();
 		System.out.println();
 		System.out.println("After all games are done, make sure to push:");
-		System.out.println("1. Go to the left and right click the main folder.(BadmintonLeague)");
-		System.out.println("2. Look through the options and click \"Team\". (It's near the bottom ish)");
-		System.out.println("3. Look through the options and click \"Commit...\". (It's the first one)");
-		System.out.println("3a... Or you can simply press:   Ctrl + #");
-		System.out.println("4. Something should pop up on the bottom, and there should be a few files under \"Unstaged Changes\".(Top Left)");
-		System.out.println("4a... If there isn't... Then you didn't save or something went wrong. Please contact tech support.");
-		System.out.println("5. Select and Drag all of those files down to \"Staged Changes\".(Bottom Left)");
-		System.out.println("6. Now under \"Commit Message\", Enter in any other relavent information that you believe to be important. (Top Right)");
-		System.out.println("6a... If you have nothing to write, then simply put the date.");
-		System.out.println("7. Now click \"Commit and Push...\". Wait for something to pop up, and hit \"OK\".");
-		System.out.println("7a... If nothing pops up... then you clicked \"Commit\" instead, then you are a BAKA!");
-		System.out.println("7b....Follow Steps 1. and 2., then click \"Push to UpStream\".(It's near the top ish)");
-		
-		
-		System.out.println("Anyways... If you have any questions, comments, or concerns, "
-				+ "please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com.");
+		System.out.println("\t1. Go to the left and right click the main folder. (BadmintonLeague)");
+		System.out.println("\t2. Look through the options and click \"Team\". (It's near the bottom ish)");
+		System.out.println("\t3. Look through the options and click \"Commit...\". (It's the first one)");
+		System.out.println("\t\t a. Or you can simply press:   Ctrl + #");
+		System.out.println("\t4. Something should pop up on the bottom, and there should be a few files under \"Unstaged Changes\". (Top Left)");
+		System.out.println("\t\t If there isn't... Then you didn't save or something went wrong. Please contact tech support.");
+		System.out.println("\t5. a. Select and Drag all of those files down to \"Staged Changes\". (Bottom Left)");
+		System.out.println("\t6. Now under \"Commit Message\", Enter in any other relavent information that you believe to be important. (Top Right)");
+		System.out.println("\t\t a. If you have nothing to write, then simply put the date.");
+		System.out.println("\t7. Now click \"Commit and Push...\". Wait for something to pop up, and hit \"OK\".");
+		System.out.println("\t\t a. If nothing pops up... then you clicked \"Commit\" instead, then you are a BAKA!");
+		System.out.println("\t\t b. Follow Steps 1 and 2, then click \"Push to UpStream\". (It's near the top ish)");
+		System.out.println();
+		System.out.println();
+		System.out.println("Anyways... If you have any questions, comments, or concerns,"
+				+ " please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com! :D");
 		System.out.println("\n\n");
 	}
-	
+
 	/**
 	 * Reads from "Playing" and create players.
 	 */
 	private static void begin() {
-		
+
 		ArrayList<String> playing = Utility.read("Playing");
 		master = Utility.read(fileName);
-		
+
 		for(String name: playing){
 			String[] split = name.split("\t");
 			String first = split[0];
 			String last = split[1];
-			
-			find(first, last);
+
+			load(first, last);
 		}
 	}
-	
+
+	/**
+	 * Starts the next round if all games are finished.
+	 */
+	private static void next() {
+		boolean finished = true;
+
+		for(Match match: matches)
+			if (!match.finished())
+				finished = false;
+
+		if(finished){
+			if(!matches.isEmpty())	matches.clear();
+			start();
+		}
+		else{
+			System.out.println("The following matches have not been completed:");
+			System.out.println();
+			System.out.println("-------------------------------------");
+			for(Match match: matches){
+				if (!match.finished()){
+					System.out.println("Match " + (matches.indexOf(match)+1) + ":");
+					System.out.println();
+					match.display();
+				}
+			}
+		}
+	}
+
+
 	/**
 	 * General distribution of players for sitting out or playing.
 	 */
-	private static void round(){
+	private static void start(){
 
 		//Get total number of players
 		int numPlayers = Player.getCount();
-		
+
 		numGames  = numPlayers / 4;
 		numExtra = numPlayers % 4;
-		
+
 		//Populates the pool of players
 		populate(Type.POOL);
-		
+
 		//Distributes players into sitting out or playing
 		extras();
 		matches();
 		display();
 	}
-	
+
 	/**
 	 * Determines the players who will sit out or play singles.
 	 */
 	private static void extras(){
-		
+
 		//If there will be a singles match
-		if (numExtra >= 2){
-			single = true;
-		}
+		if (numExtra >= 2)	single = true;
 
 		//Choose the people who are sitting out or playing singles.
 		for (int extra = 0; extra < numExtra; extra++) {
 			Player player = pick(Type.OUT);
 			extras.add(player);
 			pool.remove(player);
-			
+
 			//Once everyone sat out, repopulate the Out array.
 			if (out.isEmpty()) {
 				populate(Type.OUT);
-				for (Player side : extras){ 
-					out.remove(side); 
-				}
+				for (Player side : extras)	out.remove(side); 
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Distributes the players into matches.
 	 */
 	private static void matches(){
 		for (int game = 1; game < numGames + 1; game++) {
 
-			boolean unique = false;
+			boolean unique;
 			int errors = 0;
 			do{
-				//Clears array of pairs if too many repeats
+				unique = true;
+				//Clears repeat array of pairs if too many tries
 				if(errors > 100){
 					pairs.clear();
 				}
-
-				unique = true;
-
+				
 				//Pick four people
-				Player first = pick(Type.POOL);
-				Player second = pick(Type.POOL);
-				Player third = pick(Type.POOL);
-				Player fourth = pick(Type.POOL);
+				Player a = pick(Type.POOL);
+				Player b = pick(Type.POOL);
+				Player c = pick(Type.POOL);
+				Player d = pick(Type.POOL);
 
 				//Create Pairs
-				Pair one = new Pair(first, second);
-				Pair two = new Pair(third, fourth);
+				Pair one = new Pair(a, b);
+				Pair two = new Pair(c, d);
 
 				//Checks if it's a unique pair
-				for(Pair pair:pairs){
+				for(Pair pair: pairs){
 					if ((one.equals(pair) || two.equals(pair)) && unique){
 						unique = false;
-						pool.add(first);
-						pool.add(second);
-						pool.add(third);
-						pool.add(fourth);
 						errors++;
+						
+						//adds them back to the pool
+						pool.add(a);
+						pool.add(b);
+						pool.add(c);
+						pool.add(d);
 					}
 				}
-				
+
 				//Adds the unique pairs into the array so it doesn't repeat
 				if(unique){
 					pairs.add(one);
 					pairs.add(two);
+					
 					Doubles match = new Doubles(one,two);
 					matches.add(match);
 				}
@@ -172,7 +213,7 @@ public class Main {
 		//Singles game
 		if (single)	singles();
 	}
-	
+
 	/**
 	 * Creates a singles game.
 	 */
@@ -181,11 +222,10 @@ public class Main {
 		//Pick players from extra
 		Player first = pick(Type.EXTRA);
 		Player second = pick(Type.EXTRA);
-	
+
 		//Creates match
 		Singles match = new Singles(first,second);
 		matches.add(match);
-
 	}
 
 	/**
@@ -197,14 +237,15 @@ public class Main {
 
 		Random rand = new Random();
 
-		ArrayList<Player> array = null;
-		if (type == Type.POOL) {
-			array = pool;
-		} else if (type == Type.OUT) {
-			array = out;
-		} else if (type == Type.EXTRA) {
-			array = extras;
+		ArrayList<Player> array;
+		switch(type) {
+		case OUT: array = out;		break;
+		case POOL: array = pool;	break;
+		case EXTRA: array = extras;	break;
+		default: array = null;
 		}
+
+		//Pick a random Player and remove.
 		int num = rand.nextInt(array.size());
 		Player picked = array.get(num);
 		array.remove(picked);
@@ -218,134 +259,124 @@ public class Main {
 	 */
 	private static void populate(Type type) {
 		for (Player player : players) {
-			if (type == Type.POOL)
-				pool.add(player);
-			else if (type == Type.OUT)
-				out.add(player);
-		}
-	}
-
-	/**
-	 * Starts the next round if all games are finished.
-	 */
-	private static void next() {
-		boolean finished = true;
-		
-		for(Match match: matches)
-			if (!match.finished())
-				finished = false;
-		
-		if(finished){
-			if(!matches.isEmpty())
-				matches.clear();
-			round();
-		}
-		else{
-
-			System.out.println("The following matches have not been completed:");
-			System.out.println();
-			System.out.println("-------------------------------------");
-			for(Match match: matches){
-				if (!match.finished()){
-					System.out.println("Match " + (matches.indexOf(match)+1) + ":");
-					System.out.println();
-					match.display();
-				}
+			switch(type) {
+			case POOL:	pool.add(player); break;
+			case OUT:	out.add(player);
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Displays all of the Players currently playing.
 	 */
 	private static void viewPlayers() {
 		System.out.println();
 		System.out.println("Number of Players: " + Player.getCount());
-		for(Player player: players){
+		for(Player player: players)
 			System.out.println(player);
-		}
 		System.out.println();
 	}
-	
+
 	/**
 	 * Add a player.
 	 */
 	private static void add() {
-		
+
+		System.out.println("Player to add:");
+		System.out.println();
 		System.out.print("First Name:");
 		String first = input.next();
-		
+
 		System.out.print("Last Name:");
 		String last = input.next();
-		
-		boolean play = false;
-		for(Player player: players)
-			if(player.is(first, last)){
-				System.out.println(player + " is already playing.");
-				play = true;
+
+		Player player = find(first, last);
+		if(player != null)
+			System.out.println(player + " is already playing.");
+		else {
+
+			boolean confirm = true;
+			if(careful) {
+				System.out.println("Are you sure you want to add " + first + " " + last + "?");
+				System.out.println();
+
+				if(!Utility.confirm()) {
+					confirm = false;
+					System.out.println("ADD has been canceled.");
+				}
 			}
-		
-		if(!play){
-			find(first,last);
-			
-		}
+			if(confirm) {
+				load(first,last);
+				System.out.println(first + " " + last + " has joined the game!");
+			}
+		}	
 	}
-	
+
 	/**
-	 * Finds  Player in the "Master" file and adds it.
+	 * Loads Player in the "Master" file and adds it to Player.
 	 * @param first The first name of the Player.
 	 * @param last The last name of the Player.
 	 */
-	private static void find(String first, String last){
+	private static void load(String first, String last){
 
-		boolean found = false;
+		boolean loaded = false;
 		for(String line: master){
 			String[] split1 = line.split("\t");
 			String first1 = split1[0];
 			String last1 = split1[1];				
-			
+
 			if (first.equals(first1) && last.equals(last1)){
-				found = true;
+				loaded = true;
 				int wins = Integer.parseInt(split1[2]);
 				int losses = Integer.parseInt(split1[3]);
 				int ties = Integer.parseInt(split1[4]);
 				players.add(new Player(first, last, wins, losses, ties));
 			}
-			
-			
 		}
-		if(!found){
+		if(!loaded){
 			Player player = new Player(first, last);
-			
+
 			master.add(player.toLine());
 			Utility.write(player.toLine() + "\n", fileName , true);
-			
 			players.add(player);
 		}
 	}
-	
+
 	/**
 	 * Removes a player.
 	 */
 	private static void remove() {
-		
+
+		System.out.println("Player to remove:");
+		System.out.println();
 		System.out.print("First Name:");
 		String first = input.next();
-		
+
 		System.out.print("Last Name:");
 		String last = input.next();
-		
-		Player delete = null;
-		for(Player player:players)
-			if(player.is(first, last)){
-				update(player);
-				delete = player;
+
+		Player player = find(first, last);
+		if(player == null) {
+			System.out.println("The player you have selected does not exist.");
+		}
+		else {
+			boolean confirm = true;
+			if(careful){
+				System.out.println("Are you sure you want to remove " + player + "?");
+				System.out.println();
+
+				if(!Utility.confirm()) {
+					confirm = false;
+					System.out.println("REMOVE has been canceled.");
+				}
 			}
-		
-		//Reduces the player count.
-		delete.delete();
-		players.remove(delete);
+			if(confirm){
+				save();
+				System.out.println(player + " has been removed from play!");
+				player.delete();
+				players.remove(player);
+			}
+		}
 	}
 
 	/**
@@ -353,7 +384,7 @@ public class Main {
 	 * @param player The player to update.
 	 */
 	private static void update(Player player) {
-		
+
 		for(String line: master){
 			String[] split = line.split("\t");
 			String first = split[0];
@@ -363,7 +394,7 @@ public class Main {
 			}
 		}
 	}
-	
+
 	/**
 	 * Displays the matches and extras.
 	 */
@@ -374,15 +405,13 @@ public class Main {
 			System.out.println("-------------------------------------");
 			System.out.println("The following people sit out:");
 			System.out.println();
-			for (Player player: extras) {
+			for (Player player: extras)
 				System.out.println(player);
-			}
 			System.out.println();
 		}
-		
+
 		System.out.println("-------------------------------------");
 
-				
 		for(Match match:matches){
 			int num = matches.indexOf(match)+1;
 			System.out.println("Match " + num + ":");
@@ -390,86 +419,75 @@ public class Main {
 			match.display();
 		}
 	}
-	
+
 	/**
 	 * Swaps two Players.
 	 */
 	private static void swap() {
-		
-		String first1;
-		String last1;
-		String first2;
-		String last2;
-		
-		boolean swap;
-		do {
-			swap = false;
-			System.out.println("PLEASE!!!! Don't switch two people who are already on the same team...");
-			System.out.println("First person to switch:");
-			System.out.println();
-			System.out.print("First Name:");
-			first1 = input.next();
 
-			System.out.print("Last Name:");
-			last1 = input.next();
+		System.out.println("PLEASE DON'T SWITCH PEOPLE ON THE SAME TEAM!!!!");
+		System.out.println("First person to switch:");
+		System.out.println();
+		System.out.print("First Name:");
+		String first1 = input.next();
 
-			System.out.println("Person to switch with?");
-			System.out.println();
-			System.out.print("First Name:");
-			first2 = input.next();
+		System.out.print("Last Name:");
+		String last1 = input.next();
 
-			System.out.print("Last Name:");
-			last2 = input.next();
+		System.out.println("Person to switch with?");
+		System.out.println();
+		System.out.print("First Name:");
+		String first2 = input.next();
 
+		System.out.print("Last Name:");
+		String last2 = input.next();
+
+		Player player1 = find(first1, last1);
+		Player player2 = find(first2, last2);
+
+		if(player1 == null || player2 == null){
+			System.out.println("One or more of the players you entered does not exist. No one will be swapped.");
+		}
+		else {
+			boolean confirm = true;
 			if(careful){
-				System.out.println("Are you sure you want to swap " + first1 + " " + last1 + " and " + first2 + " " + last2 + "?");
-				System.out.println("NOTE: If you accidentally pressed swap, swap two of the same players");
+				System.out.println("Are you sure you want to swap " + player1 + " and " + player2 + "?");
 				System.out.println();
 
-				if(!Utility.confirm())
-					swap = true;
+				if(!Utility.confirm()) {
+					confirm = false;
+					System.out.println("SWAP has been canceled.");
+				}
 			}
-		}while(swap);
-			
-		Player player1 = null;
-		Player player2 = null;
-		
-		for(Player player: players){
-			if(player.is(first1, last1))
-				player1 = player;
-			if(player.is(first2, last2))
-				player2 = player;
-		}
-		
-		if(player1 == null || player2 == null){
-			System.out.println("One or more of the players you entered does not exist.");
-			swap();
-		}
-		else{
-			for(Match match: matches){
-				match.swap(player1, player2);
-			}
-			for(Player player: extras){
-
+			if(confirm) {
+				for(Match match: matches)
+					match.swap(player1, player2);
 				//Adds other player to the array and removes old player if old player is sitting out.
-				if(player.equals(player1)){
-					extras.add(player2);
-					extras.remove(player);
+				for(Player player: extras){
+					if(player.equals(player1)){
+						extras.add(player2);
+						extras.remove(player1);
+					}
+					else if(player.equals(player2)){
+						extras.add(player1);
+						extras.remove(player2);
+					}
 				}
-				else if(player.equals(player2)){
-					extras.add(player1);
-					extras.remove(player);
-				}
+				System.out.println(player1 + " and " + player2 + " have been swapped.");
 			}
 		}
 	}
-	
+
 	/**
 	 * Submitting a score.
 	 */
 	private static void score() {
-		
-		if(matches.size() == 0)
+
+		boolean completed = true;
+		for(Match match: matches)
+			if (!match.finished())
+				completed = false;
+		if(completed)
 			System.out.println("All matches are complete.");
 		else{
 			System.out.println("What was your match number? ('0' to go back.)");
@@ -487,68 +505,37 @@ public class Main {
 					System.out.println();
 					match.display();
 
+					boolean confirm = true;
 					if(careful){
-						System.out.println("Is this your match?");
+						System.out.println("Are you sure this is your match?");
 						System.out.println();
 
-						if(Utility.confirm())
-							match.complete();
-						else
-							score();
+						if(!Utility.confirm()) {
+							confirm = false;
+							System.out.println("SCORE ENTRY has been canceled.");
+						}
 					}
-					else{
+					if(confirm)
 						match.complete();
-					}
 				}
 			}
 		}
 	}
-	
-	/*
-	private static void addPair(){
-		
-		System.out.println("First person to switch out:");
-		System.out.println();
-		System.out.print("First Name:");
-		String first1 = input.next();
-		
-		System.out.print("Last Name:");
-		String last1 = input.next();
-		
-		System.out.println("Person to switch with?");
-		System.out.println();
-		System.out.print("First Name:");
-		String first2 = input.next();
-		
-		System.out.print("Last Name:");
-		String last2 = input.next();
-		
-		Player player1 = null;
-		Player player2 = null;
-		
-		for(Player player: players){
-			if(player.is(first1, last1))
-				player1 = player;
-			if(player.is(first2, last2))
-				player2 = player;
-		}
-		
-		if(player1 == null){
-			System.out.println(first1 + " " + last1 + " isn't a player. Would you like to add him?");
-			if(Utility.confirm()){
-				find(first1,last1);
-			}
-		}
-		
+
+	/**
+	 * Finds a Player in the array "players" by name.
+	 * @param first The first name of the person to be found.
+	 * @param last The last name of the person to be found.
+	 * @return The player if found. Otherwise null.
+	 */
+	private static Player find(String first, String last) {
+		Player found = null;
+		for(Player player: players)
+			if(player.is(first, last))
+				found = player;
+		return found;
 	}
-	
-	
-	private static void removePair(){
-		
-	}
-	*/
-	
-	
+
 	/**
 	 * Uploads results to "Master" file.
 	 */
@@ -556,15 +543,15 @@ public class Main {
 		for(Player player: players){
 			update(player);
 		}
-		
+
 		Utility.write("", fileName , false);
 		for(String line: master){
 			//System.out.println(line);
 			Utility.write(line + "\n", fileName , true);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Main menu.
 	 */
@@ -582,10 +569,11 @@ public class Main {
 			System.out.println("5. Submit a score");
 			System.out.println("6. View matches");
 		}
+		System.out.println("7. Help Menu. (If you have nothing else to do)");
 		System.out.println("8. End Game");
 		System.out.println("9. Save to " + fileName);
 	}
-	
+
 	/**
 	 * Where all the magic happens! :D
 	 * @param args No particular use...
@@ -593,7 +581,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		help();
-		
+
 		begin();
 		populate(Type.OUT);
 		boolean running = true;
@@ -603,22 +591,21 @@ public class Main {
 			int selection = Utility.validInt(0,9);
 
 			switch(selection){
-				case 0:	next();				break;
-				case 1:	viewPlayers();		break;
-				case 2: add();				break;
-				case 3: remove();			break;
-				case 4: swap();				break;
-				case 5: score();			break;
-				case 6: display();			break;
-				case 8: running = false;	break;
-				case 9: save();				break;
-				case 10: Scores.main();
-					master = Utility.read(fileName);	break;
-				default: System.out.println("Invalid Entry");
+			case 0:	next();				break;
+			case 1:	viewPlayers();		break;
+			case 2: add();				break;
+			case 3: remove();			break;
+			case 4: swap();				break;
+			case 5: score();			break;
+			case 6: display();			break;
+			case 7: help();				break;
+			case 8: running = false;	break;
+			case 9: save();				break;
+			case 10: Scores.main();
+			master = Utility.read(fileName);	break;
+			default: System.out.println("Invalid Entry");
 			}
 			System.out.println("\n");
 		}
-	}
-	
-	
+	}	
 }
