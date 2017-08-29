@@ -32,6 +32,23 @@ public class Main {
 	private static int numExtra;
 	
 	private static void help() {
+		System.out.println("Before you start, make sure to pull:");
+		System.out.println("1. Go to the left and right click the main folder.(BadmintonLeague)");
+		System.out.println("2. Look through the options and click \"Team\". (It's near the bottom ish)");
+		System.out.println("3. Look through the options and click \"Pull\". (It's near the top ish)");
+		System.out.println();
+		System.out.println("After all games are done, make sure to push:");
+		System.out.println("1. Go to the left and right click the main folder.(BadmintonLeague)");
+		System.out.println("2. Look through the options and click \"Team\". (It's near the bottom ish)");
+		System.out.println("3. Look through the options and click \"Commit...\". (It's the first one)");
+		System.out.println("3a... Or you can simply press:   Ctrl + #");
+		System.out.println("4. Something should pop up on the bottom, and there should be a few files under \"Unstaged Changes\".(Top Left)");
+		System.out.println("4a... If there isn't... Then you didn't save or something went wrong. Please contact tech support.");
+		System.out.println("5. Select and Drag all of those files down to \"Staged Changes\".(Bottom Left)");
+		System.out.println("6. Now under \"Commit Message\", Enter in any other relavent information that you believe to be important. (Top Right)");
+		System.out.println("6a... If you have nothing to write, then simply put the date.");
+		System.out.println("7. Now click \"Commit and Push...\". Wait for something to pop up, and click Okay.");
+		
 		System.out.println("If you have any questions or concerns, "
 				+ "please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com.");
 		System.out.println("\n\n");
