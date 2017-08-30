@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -15,6 +16,7 @@ import java.util.Scanner;
 public class Utility {
 	//Random functions that arn't specificially for this program
 	public static Scanner input = new Scanner(System.in);
+	public static Font font = new Font("Arial", Font.BOLD, 30);
 	
 	public static int inputInt(){  //Checks to see if valid integer
 		

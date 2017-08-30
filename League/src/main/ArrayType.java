@@ -1,6 +1,6 @@
 package main;
 
-public enum Type {
+public enum ArrayType {
 	//defining own states
 	//Type state has Out and Pool
 	OUT,

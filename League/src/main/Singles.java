@@ -102,10 +102,13 @@ public class Singles extends Match {
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getActionCommand().equals("First"))	finish(first, second);
-		if(e.getActionCommand().equals("Tie"))		tie();
-		if(e.getActionCommand().equals("Second"))	finish(second, first);
-
+		switch(e.getActionCommand()) {
+		case "First":	finish(first, second);	break;
+		case "Tie":		tie();					break;
+		case "Second":	finish(second, first);	break;
+		default:
+		}
+		
 		frame.dispose();
 	}
 }

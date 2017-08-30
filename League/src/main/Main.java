@@ -1,18 +1,27 @@
 package main;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 
 /**
  * @author Jiashu Wang
  *
  */
-public class Main {
+public class Main implements ActionListener{
 
 	//Change the file name, depending on which league is playing.
-	private static String fileName = "Saturday";
+	public final static String FILE_NAME = "Saturday";
 	public static boolean careful = true;
 
 	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
@@ -23,7 +32,8 @@ public class Main {
 	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
 	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
-
+	private static ArrayList<Window> frames = new ArrayList<Window>(); //array of all windows
+	
 	private static Scanner input = Utility.input;
 
 	private static boolean single;
@@ -42,7 +52,7 @@ public class Main {
 		System.out.println("\t5. Once everyone is done playing, you can go back to step 3. and continue.");
 		System.out.println("\t6. Once you are tired and you're done playing for the day, Type 9, then Type 8.");
 		System.out.println("\t\t a. If you messed up and didn't save... Well... That's really too bad cause those games no longer count :P");
-		System.out.println("\t\t b. Just Kidding, they're probably already saved, so don't worry! XD");
+		System.out.println("\t\t b. Just kidding, they're probably already saved, so don't worry! XD");
 		System.out.println();
 		System.out.println();
 		System.out.println("Before you start, make sure to pull:");
@@ -51,7 +61,7 @@ public class Main {
 		System.out.println("\t3. Look through the options and click \"Pull\". (It's near the top ish)");
 		System.out.println();
 		System.out.println();
-		System.out.println("After all games are done, make sure to push:");
+		System.out.println("After all games are done, make sure to push:"); 
 		System.out.println("\t1. Go to the left and right click the main folder. (BadmintonLeague)");
 		System.out.println("\t2. Look through the options and click \"Team\". (It's near the bottom ish)");
 		System.out.println("\t3. Look through the options and click \"Commit...\". (It's the first one)");
@@ -77,7 +87,7 @@ public class Main {
 	private static void begin() {
 
 		ArrayList<String> playing = Utility.read("Playing");
-		master = Utility.read(fileName);
+		master = Utility.read(FILE_NAME);
 
 		for(String name: playing){
 			String[] split = name.split("\t");
@@ -129,7 +139,7 @@ public class Main {
 		numExtra = numPlayers % 4;
 
 		//Populates the pool of players
-		populate(Type.POOL);
+		populate(ArrayType.POOL);
 
 		//Distributes players into sitting out or playing
 		extras();
@@ -147,13 +157,13 @@ public class Main {
 
 		//Choose the people who are sitting out or playing singles.
 		for (int extra = 0; extra < numExtra; extra++) {
-			Player player = pick(Type.OUT);
+			Player player = pick(ArrayType.OUT);
 			extras.add(player);
 			pool.remove(player);
 
 			//Once everyone sat out, repopulate the Out array.
 			if (out.isEmpty()) {
-				populate(Type.OUT);
+				populate(ArrayType.OUT);
 				for (Player side : extras)	out.remove(side); 
 			}
 		}
@@ -176,10 +186,10 @@ public class Main {
 				}
 				
 				//Pick four people
-				Player a = pick(Type.POOL);
-				Player b = pick(Type.POOL);
-				Player c = pick(Type.POOL);
-				Player d = pick(Type.POOL);
+				Player a = pick(ArrayType.POOL);
+				Player b = pick(ArrayType.POOL);
+				Player c = pick(ArrayType.POOL);
+				Player d = pick(ArrayType.POOL);
 
 				//Create Pairs
 				Pair one = new Pair(a, b);
@@ -220,8 +230,8 @@ public class Main {
 	private static void singles(){
 
 		//Pick players from extra
-		Player first = pick(Type.EXTRA);
-		Player second = pick(Type.EXTRA);
+		Player first = pick(ArrayType.EXTRA);
+		Player second = pick(ArrayType.EXTRA);
 
 		//Creates match
 		Singles match = new Singles(first,second);
@@ -233,7 +243,7 @@ public class Main {
 	 * @param type The type of array to choose the Player from.
 	 * @return The Player picked from the array.
 	 */
-	private static Player pick(Type type) {
+	private static Player pick(ArrayType type) {
 
 		Random rand = new Random();
 
@@ -257,11 +267,13 @@ public class Main {
 	 * Populates the arrays with all of the players playing.
 	 * @param type The type of array to populate
 	 */
-	private static void populate(Type type) {
+	private static void populate(ArrayType type) {
 		for (Player player : players) {
 			switch(type) {
 			case POOL:	pool.add(player); break;
 			case OUT:	out.add(player);
+			case EXTRA:
+			default:
 			}
 		}
 	}
@@ -337,7 +349,7 @@ public class Main {
 			Player player = new Player(first, last);
 
 			master.add(player.toLine());
-			Utility.write(player.toLine() + "\n", fileName , true);
+			Utility.write(player.toLine() + "\n", FILE_NAME , true);
 			players.add(player);
 		}
 	}
@@ -544,10 +556,10 @@ public class Main {
 			update(player);
 		}
 
-		Utility.write("", fileName , false);
+		Utility.write("", FILE_NAME , false);
 		for(String line: master){
 			//System.out.println(line);
-			Utility.write(line + "\n", fileName , true);
+			Utility.write(line + "\n", FILE_NAME , true);
 		}
 	}
 
@@ -571,7 +583,7 @@ public class Main {
 		}
 		System.out.println("7. Help Menu. (If you have nothing else to do)");
 		System.out.println("8. End Game");
-		System.out.println("9. Save to " + fileName);
+		System.out.println("9. Save to " + FILE_NAME);
 	}
 
 	/**
@@ -583,12 +595,12 @@ public class Main {
 		help();
 
 		begin();
-		populate(Type.OUT);
+		populate(ArrayType.OUT);
 		boolean running = true;
 		while(running){
 
 			menu();
-			int selection = Utility.validInt(0,9);
+			int selection = Utility.validInt(0, 10);
 
 			switch(selection){
 			case 0:	next();				break;
@@ -602,10 +614,97 @@ public class Main {
 			case 8: running = false;	break;
 			case 9: save();				break;
 			case 10: Scores.main();
-			master = Utility.read(fileName);	break;
+			master = Utility.read(FILE_NAME);	break;
 			default: System.out.println("Invalid Entry");
 			}
 			System.out.println("\n");
 		}
-	}	
+	}
+	
+	/**
+	 * Creates a panel to place into window frame.
+	 */
+	protected void panel() {
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		System.out.println("What would you like to do?");
+		System.out.println();
+		System.out.println("0. Start next round");
+		System.out.println("1. View players");
+		System.out.println("2. Add a player");
+		System.out.println("3. Remove a player");
+		System.out.println("4. Swap two players");
+		//System.out.println("5. Create Pairs");
+		//System.out.println("6. Remove Pairs");
+		if(!matches.isEmpty()){
+			System.out.println("5. Submit a score");
+			System.out.println("6. View matches");
+		}
+		System.out.println("7. Help Menu. (If you have nothing else to do)");
+		System.out.println("8. End Game");
+		System.out.println("9. Save to " + FILE_NAME);
+		
+		
+		
+		//Labels
+		JLabel label = new JLabel("What would you like to do?", SwingConstants.CENTER);
+		
+		//Fonts
+		//label.setFont(font);
+		
+		//Layout for Label
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridy = 1;
+		
+		gbc.gridy = 2;
+		panel.add(label, gbc);
+				
+		
+		//Buttons!
+		JButton next = new JButton("Start next round");
+		JButton view = new JButton("View players");
+		JButton add = new JButton("Add a player");
+		JButton remove = new JButton ("Remove a player");
+		JButton swap = new JButton("Swap two players");
+		JButton submit = new JButton("Submit a score");
+		JButton display = new JButton("Display matches");
+		JButton help = new JButton("Help Menu");
+		JButton end = new JButton("End Game");
+		JButton save = new JButton("Save to " + FILE_NAME);
+		
+		/*
+		//Button Text
+		text();
+		
+		//Action References
+		buttons[0].setActionCommand("First");
+		buttons[1].setActionCommand("Tie");
+		buttons[2].setActionCommand("Second");
+		
+		//Layout for Buttons
+		gbc.gridwidth = 1;
+		gbc.gridy = 3;
+		gbc.ipadx = 100;
+		gbc.insets = new Insets(5,5,5,5);  //padding
+
+		//For all buttons...
+		for(JButton button: buttons) {
+			button.setFont(font);
+			button.addActionListener(this);
+			
+			add(button, gbc);
+		}
+		*/
+		//frames.add(new Window(panel));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

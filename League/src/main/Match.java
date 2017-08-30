@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
  */
 public abstract class Match extends JPanel implements ActionListener{//Object Match, it creates a match
 
-	private Font font = new Font("Arial", Font.BOLD, 30);
+	private Font font = Utility.font;
 	
 	private boolean finished = false;
 	protected static int count = 0;
@@ -28,7 +28,7 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 	private JButton[] buttons = new JButton[] {new JButton(), new JButton(), new JButton()};
 	
 	/**
-	 * Panel manager for GUI.
+	 * Creates a panel to place into window frame.
 	 */
 	protected void panel() {
 		
