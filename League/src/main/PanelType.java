@@ -7,5 +7,6 @@ public enum PanelType {
 	REMOVE,
 	MATCH,
 	SORT,
-	SWAP
+	SWAP,
+	HELP
 }

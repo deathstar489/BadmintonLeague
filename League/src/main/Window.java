@@ -39,7 +39,7 @@ public class Window extends JFrame{
 		setLayout(new GridBagLayout());
 		setVisible(true);
 		//setTitle("Main");
-		
+		setSize(1000,1000);
 		add(panel);
 		pack();
 		

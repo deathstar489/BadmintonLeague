@@ -24,7 +24,7 @@ public class Main implements ActionListener{
 	public final static String FILE_NAME = "Saturday";
 	public static boolean careful = true;
 
-	private static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
+	public static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
 	private static ArrayList<Player> pool = new ArrayList<Player>(); //all players who are not sitting out
 	private static ArrayList<Player> out = new ArrayList<Player>(); //all players who haven't been out
 	private static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
@@ -101,7 +101,7 @@ public class Main implements ActionListener{
 	/**
 	 * Starts the next round if all games are finished.
 	 */
-	private static void next() {
+	public static void next() {
 		boolean finished = true;
 
 		for(Match match: matches)
@@ -302,11 +302,14 @@ public class Main implements ActionListener{
 		System.out.print("Last Name:");
 		String last = input.next();
 
+		add(first, last);
+	}
+
+	public static void add(String first, String last) {
 		Player player = find(first, last);
 		if(player != null)
 			System.out.println(player + " is already playing.");
 		else {
-
 			boolean confirm = true;
 			if(careful) {
 				System.out.println("Are you sure you want to add " + first + " " + last + "?");
@@ -321,9 +324,9 @@ public class Main implements ActionListener{
 				load(first,last);
 				System.out.println(first + " " + last + " has joined the game!");
 			}
-		}	
+		}
 	}
-
+	
 	/**
 	 * Loads Player in the "Master" file and adds it to Player.
 	 * @param first The first name of the Player.
@@ -366,10 +369,19 @@ public class Main implements ActionListener{
 
 		System.out.print("Last Name:");
 		String last = input.next();
+		
+		remove(first, last);
+	}
 
+	/**
+	 * Removes a player by name.
+	 * @param first The first name of player to remove.
+	 * @param last The last name of player to remove.
+	 */
+	public static void remove(String first, String last) {
 		Player player = find(first, last);
 		if(player == null) {
-			System.out.println("The player you have selected does not exist.");
+			System.out.println("The player you have specified does not exist. (" + first + " " + last + ")");
 		}
 		else {
 			boolean confirm = true;
@@ -390,7 +402,8 @@ public class Main implements ActionListener{
 			}
 		}
 	}
-
+	
+	
 	/**
 	 * Updates the Player from "Master". (Takes old player and replaces it with updated version)
 	 * @param player The player to update.
@@ -453,6 +466,11 @@ public class Main implements ActionListener{
 
 		System.out.print("Last Name:");
 		String last2 = input.next();
+		
+		swap(first1, last1, first2, last2);
+	}
+	
+	public static void swap(String first1, String last1, String first2, String last2) {
 
 		Player player1 = find(first1, last1);
 		Player player2 = find(first2, last2);
@@ -488,8 +506,9 @@ public class Main implements ActionListener{
 				System.out.println(player1 + " and " + player2 + " have been swapped.");
 			}
 		}
-	}
 
+	}
+	
 	/**
 	 * Submitting a score.
 	 */
