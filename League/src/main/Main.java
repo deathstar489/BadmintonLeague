@@ -1,38 +1,31 @@
 package main;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 
 /**
  * @author Jiashu Wang
  *
  */
-public class Main implements ActionListener{
+public class Main {
 
 	//Change the file name, depending on which league is playing.
 	public final static String FILE_NAME = "Saturday";
-	public static boolean careful = true;
+	public static boolean careful = false;
+	public static boolean GUI = true;
 
+	public static boolean running = true;
+	
 	public static ArrayList<Player> players = new ArrayList<Player>(); //all players playing today
 	private static ArrayList<Player> pool = new ArrayList<Player>(); //all players who are not sitting out
 	private static ArrayList<Player> out = new ArrayList<Player>(); //all players who haven't been out
-	private static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
-
-	private static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
+	public static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
 	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
-	private static ArrayList<Window> frames = new ArrayList<Window>(); //array of all windows
+	
+	public static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	
 	private static Scanner input = Utility.input;
 
@@ -41,6 +34,9 @@ public class Main implements ActionListener{
 	private static int numGames;
 	private static int numExtra;
 
+	public static Panel playersPanel;
+	public static Panel extrasPanel;
+	
 	private static void help() {
 
 		System.out.println("HELP WITH USING THE PROGRAM:");
@@ -105,8 +101,10 @@ public class Main implements ActionListener{
 		boolean finished = true;
 
 		for(Match match: matches)
-			if (!match.finished())
+			if (!match.finished()) {
 				finished = false;
+				match.frame.setVisible(true);
+			} 
 
 		if(finished){
 			if(!matches.isEmpty())	matches.clear();
@@ -123,6 +121,7 @@ public class Main implements ActionListener{
 					match.display();
 				}
 			}
+			
 		}
 	}
 
@@ -134,16 +133,20 @@ public class Main implements ActionListener{
 
 		//Get total number of players
 		int numPlayers = Player.getCount();
-
+		
 		numGames  = numPlayers / 4;
 		numExtra = numPlayers % 4;
-
+		
 		//Populates the pool of players
 		populate(ArrayType.POOL);
+		extras.clear();
 
 		//Distributes players into sitting out or playing
 		extras();
 		matches();
+		
+		playersPanel.updateText();
+		
 		display();
 	}
 
@@ -154,6 +157,7 @@ public class Main implements ActionListener{
 
 		//If there will be a singles match
 		if (numExtra >= 2)	single = true;
+		else				single = false;
 
 		//Choose the people who are sitting out or playing singles.
 		for (int extra = 0; extra < numExtra; extra++) {
@@ -323,6 +327,7 @@ public class Main implements ActionListener{
 			if(confirm) {
 				load(first,last);
 				System.out.println(first + " " + last + " has joined the game!");
+				if(GUI) playersPanel.updateText();
 			}
 		}
 	}
@@ -399,10 +404,10 @@ public class Main implements ActionListener{
 				System.out.println(player + " has been removed from play!");
 				player.delete();
 				players.remove(player);
+				if(GUI) playersPanel.updateText();
 			}
 		}
 	}
-	
 	
 	/**
 	 * Updates the Player from "Master". (Takes old player and replaces it with updated version)
@@ -476,7 +481,7 @@ public class Main implements ActionListener{
 		Player player2 = find(first2, last2);
 
 		if(player1 == null || player2 == null){
-			System.out.println("One or more of the players you entered does not exist. No one will be swapped.");
+			System.out.println("One or more of the players you entered does not exist. Swapping is canceled.");
 		}
 		else {
 			boolean confirm = true;
@@ -610,120 +615,37 @@ public class Main implements ActionListener{
 	 * @param args No particular use...
 	 */
 	public static void main(String[] args) {
-
-		help();
-
 		begin();
 		populate(ArrayType.OUT);
-		boolean running = true;
-		while(running){
-
-			menu();
-			int selection = Utility.validInt(0, 10);
-
-			switch(selection){
-			case 0:	next();				break;
-			case 1:	viewPlayers();		break;
-			case 2: add();				break;
-			case 3: remove();			break;
-			case 4: swap();				break;
-			case 5: score();			break;
-			case 6: display();			break;
-			case 7: help();				break;
-			case 8: running = false;	break;
-			case 9: save();				break;
-			case 10: Scores.main();
-			master = Utility.read(FILE_NAME);	break;
-			default: System.out.println("Invalid Entry");
-			}
-			System.out.println("\n");
+		
+		if(GUI) {
+			new Panel(PanelType.MAIN);
+			playersPanel = new Panel(PanelType.VIEW);
 		}
-	}
+		else {
+			help();
+			while(running){
 	
-	/**
-	 * Creates a panel to place into window frame.
-	 */
-	protected void panel() {
-		
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		
-		System.out.println("What would you like to do?");
-		System.out.println();
-		System.out.println("0. Start next round");
-		System.out.println("1. View players");
-		System.out.println("2. Add a player");
-		System.out.println("3. Remove a player");
-		System.out.println("4. Swap two players");
-		//System.out.println("5. Create Pairs");
-		//System.out.println("6. Remove Pairs");
-		if(!matches.isEmpty()){
-			System.out.println("5. Submit a score");
-			System.out.println("6. View matches");
+				menu();
+				int selection = Utility.validInt(0, 10);
+	
+				switch(selection){
+				case 0:	next();				break;
+				case 1:	viewPlayers();		break;
+				case 2: add();				break;
+				case 3: remove();			break;
+				case 4: swap();				break;
+				case 5: score();			break;
+				case 6: display();			break;
+				case 7: help();				break;
+				case 8: running = false;	break;
+				case 9: save();				break;
+				case 10: Scores.main();
+				master = Utility.read(FILE_NAME);	break;
+				default: System.out.println("Invalid Entry");
+				}
+				System.out.println("\n");
+			}
 		}
-		System.out.println("7. Help Menu. (If you have nothing else to do)");
-		System.out.println("8. End Game");
-		System.out.println("9. Save to " + FILE_NAME);
-		
-		
-		
-		//Labels
-		JLabel label = new JLabel("What would you like to do?", SwingConstants.CENTER);
-		
-		//Fonts
-		//label.setFont(font);
-		
-		//Layout for Label
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 3;
-		gbc.gridy = 1;
-		
-		gbc.gridy = 2;
-		panel.add(label, gbc);
-				
-		
-		//Buttons!
-		JButton next = new JButton("Start next round");
-		JButton view = new JButton("View players");
-		JButton add = new JButton("Add a player");
-		JButton remove = new JButton ("Remove a player");
-		JButton swap = new JButton("Swap two players");
-		JButton submit = new JButton("Submit a score");
-		JButton display = new JButton("Display matches");
-		JButton help = new JButton("Help Menu");
-		JButton end = new JButton("End Game");
-		JButton save = new JButton("Save to " + FILE_NAME);
-		
-		/*
-		//Button Text
-		text();
-		
-		//Action References
-		buttons[0].setActionCommand("First");
-		buttons[1].setActionCommand("Tie");
-		buttons[2].setActionCommand("Second");
-		
-		//Layout for Buttons
-		gbc.gridwidth = 1;
-		gbc.gridy = 3;
-		gbc.ipadx = 100;
-		gbc.insets = new Insets(5,5,5,5);  //padding
-
-		//For all buttons...
-		for(JButton button: buttons) {
-			button.setFont(font);
-			button.addActionListener(this);
-			
-			add(button, gbc);
-		}
-		*/
-		//frames.add(new Window(panel));
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 }

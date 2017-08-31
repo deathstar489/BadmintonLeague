@@ -25,7 +25,6 @@ public class Pair {
 	}
 	
 	public void win(){
-		System.out.println("Congratulations to " + this + "!");
 		first.win();
 		second.win();
 	}

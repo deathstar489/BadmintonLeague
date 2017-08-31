@@ -16,7 +16,7 @@ import java.util.Scanner;
 public class Utility {
 	//Random functions that arn't specificially for this program
 	public static Scanner input = new Scanner(System.in);
-	public static Font font = new Font("Arial", Font.BOLD, 30);
+	public static Font font = new Font("Arial", Font.BOLD, 25);
 	
 	public static int inputInt(){  //Checks to see if valid integer
 		

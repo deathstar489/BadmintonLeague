@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,26 +18,29 @@ import javax.swing.JTextField;
 public class Panel extends JPanel implements ActionListener{
 
 	private Font font = Utility.font;
-	private Font font2 = new Font("Ariel", Font.PLAIN, 20);
-	JLabel blank = new JLabel(" ");
-	GridBagConstraints gbc = new GridBagConstraints();
-	public static String title;
-	public static JFrame frame;
+	private Font text = new Font("Ariel", Font.PLAIN, 20);
+	
+	private GridBagConstraints gbc = new GridBagConstraints();
+	
+	private JFrame frame;
+	private JTextArea TextArea;
+	
+	public String title;
 	
 	public Panel(PanelType type) {
 
 		setLayout(new GridBagLayout());
 		gbc.insets = new Insets(5, 5, 5, 5);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.ipadx = 100;
 		
 		switch(type) {
-		case MAIN:		main();		title = "Main";		break;
-		case ADD:		add();		title = "Add";		break;
-		case REMOVE:	remove();	title = "Remove";	break;
-		case SWAP:		swap();		title = "Swap";		break;
-		case MATCH:		match();	title = "Match";	break;
-		case HELP:		help();		title = "help";		break;
+		case MAIN:		title = "Main";		main();		break;
+		case VIEW:		title = "Players";	view();		break;
+		case ADD:		title = "Add";		add();		break;
+		case REMOVE:	title = "Remove";	remove();	break;
+		case SWAP:		title = "Swap";		swap();		break;
+		//case MATCH:		title = "Match";	match();	break;
+		case HELP:		title = "Help";		help();		break;
 		default:
 		}  
 	}
@@ -50,8 +54,8 @@ public class Panel extends JPanel implements ActionListener{
 				new JButton("Add a player"),
 				new JButton ("Remove a player"),
 				new JButton("Swap two players"),
-				new JButton("Submit a score"),
-				new JButton("Display matches"),
+				new JButton("View Matches / Submit Scores"),
+				//new JButton("Display matches"),
 				new JButton("Help Menu"),
 				new JButton("End Game"),
 				new JButton("Save to \"" + Main.FILE_NAME + "\"")
@@ -63,8 +67,8 @@ public class Panel extends JPanel implements ActionListener{
 				"Add",
 				"Remove",
 				"Swap",
-				"Submit",
-				"Display",
+				"Match",
+				//"Display",
 				"Help",
 				"Close",
 				"Save"
@@ -79,40 +83,43 @@ public class Panel extends JPanel implements ActionListener{
 			
 			add(button[x],gbc);
 		}
+		
+		frame = new Window(this);
 	}
 	
-	private void add() {
-
-		JLabel label = new JLabel("Player to Add:");
-		label.setFont(font);
-		gbc.gridwidth = 2;
-		add(label, gbc);
+	private void view() {
+		TextArea = new JTextArea();
+		TextArea.setEditable(false);
+		TextArea.setFont(text);
+		updateText();
+		add(TextArea, gbc);
 		
-		JTextField[] array = name();
-		JTextField tffirst = array[0];
-		JTextField tflast = array[1];
-		
-		JButton button = new JButton("Add");
-		button.setFont(font);
-		button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				Main.add(tffirst.getText(),tflast.getText());
-				frame.dispose();
-			}
-		});
-		gbc.gridy = 4;
-		gbc.gridx = 0;
-		gbc.gridwidth = 2;
-		add(button, gbc);
+		frame = new Window(this);
 	}
-
-	private void remove() {
+	
+	public void updateText() {
 		
-		gbc.ipadx = 0;
-		JLabel label = new JLabel("Player to Remove:");
-		label.setFont(font);
-		gbc.gridx = 0;
-		add(label, gbc);
+		TextArea.setText(" Number of Players: " + Player.getCount() + "       \n\n ");
+		for(Player player: Main.players) {
+			if(!Main.extras.contains(player))
+				TextArea.setText(TextArea.getText() + player + "\n ");
+			else
+				TextArea.setText(TextArea.getText() + player + "\t - Sitting Out\n ");
+		}
+	}
+	
+	private void name() {
+		JLabel first = new JLabel("First Name");
+		JLabel last = new JLabel("Last Name");
+		first.setFont(text);
+		last.setFont(text);
+		gbc.gridx = 1;
+		add(first, gbc);
+		gbc.gridx = 2;
+		add(last, gbc);
+	}
+	
+	private JTextField[] entry() {
 		
 		JTextField tffirst = new JTextField(6);
 		tffirst.setToolTipText("First Name");
@@ -126,124 +133,133 @@ public class Panel extends JPanel implements ActionListener{
 		gbc.gridx = 2;
 		add(tflast, gbc);
 		
-		//JTextField[] array = name();
-		//JTextField tffirst = array[0];
-		//JTextField tflast = array[1];
+		return new JTextField[] {tffirst, tflast};
+	}
+	
+	private void add() {
+
+		name();
+		
+		JLabel label = new JLabel("Player to Add:");
+		label.setFont(text);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		add(label, gbc);
+		
+		JTextField[] array = entry();
+		JTextField tffirst = array[0];
+		JTextField tflast = array[1];
+		
+		JButton button = new JButton("Add");
+		button.setFont(font);
+		
+		ActionListener actionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if(tffirst.getText() != null && tflast.getText() != null) {
+					Main.add(tffirst.getText(),tflast.getText());
+					frame.dispose();
+				}
+			}
+		};
+		
+		tflast.addActionListener(actionListener);
+		button.addActionListener(actionListener);
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		gbc.gridwidth = 3;
+		add(button, gbc);
+		
+		frame = new Window(this);
+	}
+
+	private void remove() {
+		
+		name();
+		
+		JLabel label = new JLabel("Player to Remove:");
+		label.setFont(text);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		add(label, gbc);
+		
+		JTextField[] array = entry();
+		JTextField tffirst = array[0];
+		JTextField tflast = array[1];
 		
 		JButton button = new JButton("Remove");
 		button.setFont(font);
-		button.addActionListener(new ActionListener(){
+		
+		ActionListener listener = new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				Main.remove(tffirst.getText(),tflast.getText());
-				frame.dispose();
+				if(tffirst.getText() != null && tflast.getText() != null) {
+					Main.remove(tffirst.getText(),tflast.getText());
+					frame.dispose();
+				}
 			}
-		});
-		gbc.gridy = 1;
+		};
+		
+		tflast.addActionListener(listener);
+		button.addActionListener(listener);
+		
 		gbc.gridx = 0;
+		gbc.gridy = 2;
 		gbc.gridwidth = 3;
 		add(button, gbc);
+		
+		frame = new Window(this);
 	}
-
-	private JTextField[] name() {
-		
-		JLabel first = new JLabel("First Name: ");
-		first.setFont(font);
-		gbc.gridy = 2;
-		gbc.gridx = 0;
-		gbc.gridwidth = 1;
-		add(first, gbc);
-		
-		JTextField tffirst = new JTextField(6);
-		tffirst.setFont(font);
-		gbc.gridx = 1;
-		add(tffirst, gbc);
-		
-		JLabel last = new JLabel("Last Name: ");
-		last.setFont(font);
-		gbc.gridy = 3;
-		gbc.gridx = 0;
-		add(last, gbc);
-		
-		JTextField tflast = new JTextField(6);
-		tflast.setFont(font);
-		gbc.gridx = 1;
-		add(tflast, gbc);
-		
-		return new JTextField[] {tffirst, tflast};
-	}
-	
-	private JTextField[] name(String forSwap) {
-		
-		JLabel first = new JLabel("First Name: ");
-		first.setFont(font);
-		gbc.gridy = 2;
-		gbc.gridx = 2;
-		gbc.gridwidth = 1;
-		add(first, gbc);
-		
-		JTextField tffirst = new JTextField(6);
-		tffirst.setFont(font);
-		gbc.gridx = 3;
-		add(tffirst, gbc);
-		
-		JLabel last = new JLabel("Last Name: ");
-		last.setFont(font);
-		gbc.gridy = 3;
-		gbc.gridx = 2;
-		add(last, gbc);
-		
-		JTextField tflast = new JTextField(6);
-		tflast.setFont(font);
-		gbc.gridx = 3;
-		add(tflast, gbc);
-		
-		return new JTextField[] {tffirst, tflast};
-	}
-	
 	
 	private void swap() {
+
+		name();
+		
 		JLabel label1 = new JLabel("First Player to Swap:");
-		label1.setFont(font);
-		gbc.gridwidth = 2;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		label1.setFont(text);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
 		add(label1, gbc);
 		
-		JTextField[] array1 = name();
+		JTextField[] array1 = entry();
 		JTextField tffirst1 = array1[0];
 		JTextField tflast1 = array1[1];
 		
 		JLabel label2 = new JLabel("Second Player to Swap:");
-		label2.setFont(font);
-		gbc.gridy = 0;
-		gbc.gridx = 2;
+		label2.setFont(text);
+		gbc.gridx = 0;
+		gbc.gridy = 2;
 		add(label2, gbc);
 		
-		JTextField[] array2 = name(" ");
+		JTextField[] array2 = entry();
 		JTextField tffirst2 = array2[0];
 		JTextField tflast2 = array2[1];
 		
 		JButton button = new JButton("Swap");
 		button.setFont(font);
-		button.addActionListener(new ActionListener(){
+		
+		ActionListener listener = new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				Main.swap(tffirst1.getText(), tflast1.getText(), tffirst2.getText(), tflast2.getText());
 				frame.dispose();
 			}
-		});
-		gbc.gridy = 4;
+		};
+		
+		tflast2.addActionListener(listener);
+		button.addActionListener(listener);
+		
 		gbc.gridx = 0;
-		gbc.gridwidth = 4;
+		gbc.gridy = 3;
+		gbc.gridwidth = 3;
 		add(button, gbc);
 		
+		frame = new Window(this);
 	}
 	
 	private void help() {
-		JTextArea text = new JTextArea();
-		text.setEditable(false);
-		text.setFont(font2);
-		text.setText(
-				"HELP WITH USING THE PROGRAM:\n"
+		JTextArea TextArea = new JTextArea();
+		TextArea.setEditable(false);
+		TextArea.setFont(text);
+		TextArea.setText(
+				" HELP WITH USING THE PROGRAM:\n"
 				+"\t1. First, enter the first and last names of the people that are present into the \"Playing\" file. (Separated by a tab)\n"
 				+"\t\t a. If you can't find the file open, look to the left and under BadmintonLeague_League > src > main. (It's near the bottom)\n"
 				+"\t2. Then you run the program, which you should know cause you're reading this right now.\n"
@@ -253,11 +269,11 @@ public class Panel extends JPanel implements ActionListener{
 				+"\t6. Once you are tired and you're done playing for the day, Type 9, then Type 8.\n"
 				+"\t\t a. If you messed up and didn't save... Well... That's really too bad cause those games no longer count :P\n"
 				+"\t\t b. Just kidding, they're probably already saved, so don't worry! XD\n\n"
-				+"Before you start, make sure to pull:\n"
+				+" Before you start, make sure to pull:\n"
 				+"\t1. Go to the left and right click the main folder. (BadmintonLeague)\n"
 				+"\t2. Look through the options and click \"Team\". (It's near the bottom ish)\n"
 				+"\t3. Look through the options and click \"Pull\". (It's near the top ish)\n\n"
-				+"After all games are done, make sure to push:\n" 
+				+" After all games are done, make sure to push:\n" 
 				+"\t1. Go to the left and right click the main folder. (BadmintonLeague)\n"
 				+"\t2. Look through the options and click \"Team\". (It's near the bottom ish)\n"
 				+"\t3. Look through the options and click \"Commit...\". (It's the first one)\n"
@@ -270,41 +286,37 @@ public class Panel extends JPanel implements ActionListener{
 				+"\t7. Now click \"Commit and Push...\". Wait for something to pop up, and hit \"OK\".\n"
 				+"\t\t a. If nothing pops up... then you clicked \"Commit\" instead, then you are a BAKA!\n"
 				+"\t\t b. Follow Steps 1 and 2, then click \"Push to UpStream\". (It's near the top ish)\n\n"
-				+"Anyways... If you have any questions, comments, or concerns,"
-						+ " please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com! :D\n"
-				+"\n\n"
-				);
+				+" Anyways... If you have any questions, comments, or concerns,"
+						+ " please feel free to contact tech support at (587)889-8369 or jiashuwang459@gmail.com! :D \n");
 		
-		add(text);
+		add(TextArea, gbc);
+		
+		frame = new Window(this);
 	}
 
 	private void match() {
-		// TODO Auto-generated method stub
 		
+		for(Match match: Main.matches) {
+			if(!match.finished())
+				match.frame.setVisible(true);
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		switch(e.getActionCommand()) {
-//		case "Next": Main.next();		break;
-//		case "View": view();			break;
-//		case "Add": add();				break;
-//		case "Remove": remove();		break;
-//		case "Swap": swap();			break;
-//		case "Submit": score();			break;
-//		case "Display": display();		break;
-//		case "Help": help();			break;
-//		case "Close": running = false;	break;
-//		case "Save": save();			break;
+		case "Next"  : Main.next();							break;
+		case "View"  : Main.playersPanel.frame.setVisible(true);
+					   updateText(); 						break;
+		case "Add"   : new Panel(PanelType.ADD);			break;
+		case "Remove": new Panel(PanelType.REMOVE);			break;
+		case "Swap"  : new Panel(PanelType.SWAP);			break;
+		case "Match" : match();								break;
+		case "Help"  : new Panel(PanelType.HELP);			break;
+		case "Close" : frame.dispose();						break;
+		case "Save"  : Main.save();							break;
 		default:
 		}
-	}
-	
-	public static void main(String[] args) {
-		
-		//Panel panel = new Panel(PanelType.MAIN);
-		Panel panel = new Panel(PanelType.HELP);
-		frame = new Window(panel);
 	}
 }

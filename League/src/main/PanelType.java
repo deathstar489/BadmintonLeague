@@ -3,9 +3,10 @@ package main;
 public enum PanelType {
 
 	MAIN,
+	VIEW,
 	ADD,
 	REMOVE,
-	MATCH,
+	//MATCH,
 	SORT,
 	SWAP,
 	HELP

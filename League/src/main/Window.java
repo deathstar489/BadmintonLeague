@@ -17,7 +17,7 @@ public class Window extends JFrame{
 	 */
 	public Window(Match match) {
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setLayout(new GridBagLayout());
 		setVisible(true);
 		setTitle("Match " + Match.count);
@@ -30,37 +30,30 @@ public class Window extends JFrame{
 	}
 	
 	/**
-	 * JFrame for main program.
+	 * JFrame for the rest of the program.
 	 * @param main The main program.
 	 */
 	public Window(Panel panel) {
-
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		setLayout(new GridBagLayout());
 		setVisible(true);
-		//setTitle("Main");
-		setSize(1000,1000);
+		
+		switch(panel.title) {
+		case "Main": setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	break;
+		case "Players":
+		case "Add": 
+		case "Remove":
+		case "Swap":
+		case "Help":
+		default: setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
+		setTitle(panel.title);
+		
+		
 		add(panel);
 		pack();
 		
 		//center
 		setLocationRelativeTo(null);
 	}
-	
-	
-	public Window(JPanel panel, String title) {
-		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setLayout(new GridBagLayout());
-		setVisible(true);
-		setTitle(title);
-		
-		add(panel);
-		pack();
-		
-		//center
-		setLocationRelativeTo(null);
-	}
-	
-	
 }

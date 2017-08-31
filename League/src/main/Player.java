@@ -43,14 +43,17 @@ public class Player {
 	}
 	
 	public void win(){
+		System.out.println(this + ", Congratulations!");
 		wins++;
 	}
 	
 	public void lose(){
+		System.out.println(this + ", You worked hard!");
 		losses++;
 	}
 	
 	public void tie(){
+		System.out.println(this + ", Better luck next time!");
 		ties++;
 	}
 	
