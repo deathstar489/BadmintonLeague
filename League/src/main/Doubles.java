@@ -11,7 +11,7 @@ public class Doubles extends Match {
 		this.one = one;
 		this.two = two;	
 		count++;
-		panel();
+		if(Main.GUI) panel();
 	}
 
 	/* (non-Javadoc)

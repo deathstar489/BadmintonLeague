@@ -23,7 +23,7 @@ public class Panel extends JPanel implements ActionListener{
 	private GridBagConstraints gbc = new GridBagConstraints();
 	
 	private JFrame frame;
-	private JTextArea TextArea;
+	public JTextArea TextArea;
 	
 	public String title;
 	
@@ -39,7 +39,6 @@ public class Panel extends JPanel implements ActionListener{
 		case ADD:		title = "Add";		add();		break;
 		case REMOVE:	title = "Remove";	remove();	break;
 		case SWAP:		title = "Swap";		swap();		break;
-		//case MATCH:		title = "Match";	match();	break;
 		case HELP:		title = "Help";		help();		break;
 		default:
 		}  
@@ -55,9 +54,7 @@ public class Panel extends JPanel implements ActionListener{
 				new JButton ("Remove a player"),
 				new JButton("Swap two players"),
 				new JButton("View Matches / Submit Scores"),
-				//new JButton("Display matches"),
 				new JButton("Help Menu"),
-				new JButton("End Game"),
 				new JButton("Save to \"" + Main.FILE_NAME + "\"")
 		};
 
@@ -68,9 +65,7 @@ public class Panel extends JPanel implements ActionListener{
 				"Remove",
 				"Swap",
 				"Match",
-				//"Display",
 				"Help",
-				"Close",
 				"Save"
 		};
 		
@@ -106,6 +101,8 @@ public class Panel extends JPanel implements ActionListener{
 			else
 				TextArea.setText(TextArea.getText() + player + "\t - Sitting Out\n ");
 		}
+		if(frame != null)
+			frame.pack();
 	}
 	
 	private void name() {
@@ -128,7 +125,7 @@ public class Panel extends JPanel implements ActionListener{
 		add(tffirst, gbc);
 		
 		JTextField tflast = new JTextField(6);
-		tffirst.setToolTipText("Last Name");
+		tflast.setToolTipText("Last Name");
 		tflast.setFont(font);
 		gbc.gridx = 2;
 		add(tflast, gbc);
@@ -307,14 +304,12 @@ public class Panel extends JPanel implements ActionListener{
 		
 		switch(e.getActionCommand()) {
 		case "Next"  : Main.next();							break;
-		case "View"  : Main.playersPanel.frame.setVisible(true);
-					   updateText(); 						break;
+		case "View"  : Main.playersPanel.frame.setVisible(true);break;
 		case "Add"   : new Panel(PanelType.ADD);			break;
 		case "Remove": new Panel(PanelType.REMOVE);			break;
 		case "Swap"  : new Panel(PanelType.SWAP);			break;
 		case "Match" : match();								break;
 		case "Help"  : new Panel(PanelType.HELP);			break;
-		case "Close" : frame.dispose();						break;
 		case "Save"  : Main.save();							break;
 		default:
 		}

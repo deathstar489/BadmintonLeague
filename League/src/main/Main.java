@@ -145,7 +145,7 @@ public class Main {
 		extras();
 		matches();
 		
-		playersPanel.updateText();
+		if(GUI) playersPanel.updateText();
 		
 		display();
 	}
@@ -178,8 +178,8 @@ public class Main {
 	 * Distributes the players into matches.
 	 */
 	private static void matches(){
+		Match.count = 0;
 		for (int game = 1; game < numGames + 1; game++) {
-
 			boolean unique;
 			int errors = 0;
 			do{
@@ -404,6 +404,7 @@ public class Main {
 				System.out.println(player + " has been removed from play!");
 				player.delete();
 				players.remove(player);
+				out.remove(player);
 				if(GUI) playersPanel.updateText();
 			}
 		}
@@ -511,7 +512,7 @@ public class Main {
 				System.out.println(player1 + " and " + player2 + " have been swapped.");
 			}
 		}
-
+		if(GUI) playersPanel.updateText();
 	}
 	
 	/**

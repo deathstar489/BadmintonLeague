@@ -11,7 +11,7 @@ public class Singles extends Match {
 		this.first = first;
 		this.second = second;
 		count++;
-		panel();
+		if(Main.GUI) panel();
 	}
 
 	protected String getGame(String side) {
