@@ -2,6 +2,7 @@ package main;
 
 import java.awt.event.ActionEvent;
 
+@SuppressWarnings("serial")
 public class Doubles extends Match {
 
 	protected Pair one;

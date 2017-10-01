@@ -6,15 +6,17 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+@SuppressWarnings("serial")
 public class Panel extends JPanel implements ActionListener{
 
 	private Font font = Utility.font;
@@ -23,7 +25,8 @@ public class Panel extends JPanel implements ActionListener{
 	private GridBagConstraints gbc = new GridBagConstraints();
 	
 	private JFrame frame;
-	public JTextArea TextArea;
+	public JList<Object> playingList;
+	public JList<Object> masterList;
 	
 	public String title;
 	
@@ -39,6 +42,7 @@ public class Panel extends JPanel implements ActionListener{
 		case ADD:		title = "Add";		add();		break;
 		case REMOVE:	title = "Remove";	remove();	break;
 		case SWAP:		title = "Swap";		swap();		break;
+		case MASTER:	title = "Master";	master();	break;
 		case HELP:		title = "Help";		help();		break;
 		default:
 		}  
@@ -51,9 +55,10 @@ public class Panel extends JPanel implements ActionListener{
 				new JButton("Start next round"),
 				new JButton("View players"),
 				new JButton("Add a player"),
-				new JButton ("Remove a player"),
+				new JButton("Remove a player"),
 				new JButton("Swap two players"),
 				new JButton("View Matches / Submit Scores"),
+				new JButton("View Master Players"),
 				new JButton("Help Menu"),
 				new JButton("Save to \"" + Main.FILE_NAME + "\"")
 		};
@@ -65,6 +70,7 @@ public class Panel extends JPanel implements ActionListener{
 				"Remove",
 				"Swap",
 				"Match",
+				"Master",
 				"Help",
 				"Save"
 		};
@@ -76,31 +82,67 @@ public class Panel extends JPanel implements ActionListener{
 			
 			gbc.gridy = x;
 			
-			add(button[x],gbc);
+			add(button[x], gbc);
 		}
 		
 		frame = new Window(this);
 	}
 	
 	private void view() {
-		TextArea = new JTextArea();
-		TextArea.setEditable(false);
-		TextArea.setFont(text);
+		playingList = new JList<Object>();
+		playingList.setName("playing");
+		playingList.setDragEnabled(true);
+		playingList.setFont(text);
+		playingList.setTransferHandler(new Handler(PanelType.VIEW));
 		updateText();
-		add(TextArea, gbc);
-		
+		add(playingList, gbc);
 		frame = new Window(this);
 	}
 	
+	private void master() {
+		masterList = new JList<Object>();
+		masterList.setName("Master");
+		masterList.setDragEnabled(true);
+		masterList.setFont(text);
+		masterList.setTransferHandler(new Handler(PanelType.MASTER));
+		masterList.setLayoutOrientation(JList.VERTICAL_WRAP);
+		updateMaster();
+		add(masterList, gbc);
+		frame = new Window(this);
+		
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void updateText() {
 		
-		TextArea.setText(" Number of Players: " + Player.getCount() + "       \n\n ");
+		DefaultListModel model = new DefaultListModel<>();
+		model.addElement(" Number of Players: " + Player.getCount()+ "          ");
+		model.addElement(" ");
 		for(Player player: Main.players) {
 			if(!Main.extras.contains(player))
-				TextArea.setText(TextArea.getText() + player + "\n ");
+				model.addElement(" " + player.toString());
 			else
-				TextArea.setText(TextArea.getText() + player + "\t - Sitting Out\n ");
+				model.addElement(" " + player + " - Sitting Out\n ");
 		}
+		model.addElement(" ");
+		
+		playingList.setModel(model);
+		if(frame != null)
+			frame.pack();
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes" })
+	public void updateMaster() {
+		
+		DefaultListModel model= new DefaultListModel<>();
+		model.addElement(" Number of Players: " + Main.master.size() + "          ");
+		model.addElement(" ");
+		for(String line: Main.master) {
+			String[] split = line.split("\t");
+			model.addElement(split[0] + " " + split[1]);
+		}
+		model.addElement(" ");
+		masterList.setModel(model);
 		if(frame != null)
 			frame.pack();
 	}
@@ -304,11 +346,12 @@ public class Panel extends JPanel implements ActionListener{
 		
 		switch(e.getActionCommand()) {
 		case "Next"  : Main.next();							break;
-		case "View"  : Main.playersPanel.frame.setVisible(true);break;
+		case "View"  : Main.playersPanel.frame.setVisible(true); break;
 		case "Add"   : new Panel(PanelType.ADD);			break;
 		case "Remove": new Panel(PanelType.REMOVE);			break;
 		case "Swap"  : new Panel(PanelType.SWAP);			break;
 		case "Match" : match();								break;
+		case "Master": Main.masterPanel.frame.setVisible(true); break;
 		case "Help"  : new Panel(PanelType.HELP);			break;
 		case "Save"  : Main.save();							break;
 		default:

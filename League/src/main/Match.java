@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
  * @author Jiashu Wang
  *
  */
+@SuppressWarnings("serial")
 public abstract class Match extends JPanel implements ActionListener{//Object Match, it creates a match
 
 	private Font font = Utility.font;

@@ -23,7 +23,7 @@ public class Main {
 	private static ArrayList<Player> out = new ArrayList<Player>(); //all players who haven't been out
 	public static ArrayList<Player> extras = new ArrayList<Player>(); //all players who are out that current round
 	private static ArrayList<Pair> pairs = new ArrayList<Pair>(); //array of pairs (teams) so nobody gets same team again
-	private static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
+	public static ArrayList<String> master = new ArrayList<String>(); //array of strings of every line in Master (everyone in the league)
 	
 	public static ArrayList<Match> matches = new ArrayList<Match>(); //array of matches
 	
@@ -35,7 +35,7 @@ public class Main {
 	private static int numExtra;
 
 	public static Panel playersPanel;
-	public static Panel extrasPanel;
+	public static Panel masterPanel;
 	
 	private static void help() {
 
@@ -328,6 +328,7 @@ public class Main {
 				load(first,last);
 				System.out.println(first + " " + last + " has joined the game!");
 				if(GUI) playersPanel.updateText();
+				if(GUI) masterPanel.updateMaster();
 			}
 		}
 	}
@@ -622,6 +623,7 @@ public class Main {
 		if(GUI) {
 			new Panel(PanelType.MAIN);
 			playersPanel = new Panel(PanelType.VIEW);
+			masterPanel = new Panel(PanelType.MASTER);
 		}
 		else {
 			help();

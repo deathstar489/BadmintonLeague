@@ -9,5 +9,6 @@ public enum PanelType {
 	//MATCH,
 	SORT,
 	SWAP,
-	HELP
+	HELP,
+	MASTER
 }

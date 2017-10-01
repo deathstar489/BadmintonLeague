@@ -3,12 +3,12 @@ package main;
 import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  * @author Jiashu Wang
  *
  */
+@SuppressWarnings("serial")
 public class Window extends JFrame{
 
 	/**
@@ -44,6 +44,7 @@ public class Window extends JFrame{
 		case "Add": 
 		case "Remove":
 		case "Swap":
+		case "Master":
 		case "Help":
 		default: setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		}
