@@ -11,7 +11,7 @@ public class Scores {
 	private static ArrayList<Player> players = new ArrayList<Player>();
 	private static int count = 0;
 	
-	private static String fileName = "Master";
+	private static String fileName = "Saturday";
 	
 	/**
 	 * Creates a Player for every unique name in Master.
