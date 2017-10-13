@@ -1,6 +1,10 @@
-package main;
+package match;
 
 import java.awt.event.ActionEvent;
+
+import main.Main;
+import main.Player;
+import main.Utility;
 
 @SuppressWarnings("serial")
 public class Doubles extends Match {
@@ -11,6 +15,7 @@ public class Doubles extends Match {
 	public Doubles(Pair one, Pair two) {
 		this.one = one;
 		this.two = two;	
+		type = MatchType.DOUBLES;
 		count++;
 		if(Main.GUI) panel();
 	}
@@ -28,7 +33,7 @@ public class Doubles extends Match {
 	/* (non-Javadoc)
 	 * @see main.Match#display()
 	 */
-	protected void display() {
+	public void display() {
 		System.out.printf("%-20s %-20s\n", one.getFirst(), two.getFirst());
 		System.out.println("     &        vs          &");
 		System.out.printf("%-20s %-20s\n", one.getSecond(), two.getSecond());
@@ -40,7 +45,7 @@ public class Doubles extends Match {
 	/* (non-Javadoc)
 	 * @see main.Match#complete()
 	 */
-	protected void complete() {
+	public void complete() {
 		System.out.println("Who won? ('0' to cancel)");
 		System.out.println();
 		System.out.println("1. " + one + ".");
@@ -83,10 +88,11 @@ public class Doubles extends Match {
 		}
 	}
 	
-	protected void swap(Player player1, Player player2) {
+	public void swap(Player player1, Player player2) {
 		one.swap(player1, player2);
 		two.swap(player1, player2);
 		text();
+		frame.pack();
 	}
 	
 	protected void tie() {

@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import gui.Panel;
+import gui.PanelType;
+import match.Doubles;
+import match.Match;
+import match.Pair;
+import match.Singles;
+
 
 /**
  * @author Jiashu Wang
@@ -484,6 +491,9 @@ public class Main {
 
 		if(player1 == null || player2 == null){
 			System.out.println("One or more of the players you entered does not exist. Swapping is canceled.");
+		}
+		else if(player1.equals(player2)) {
+			System.out.println("You're selecting the same person. Swapping is canceled.");
 		}
 		else {
 			boolean confirm = true;

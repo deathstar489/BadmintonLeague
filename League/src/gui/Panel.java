@@ -1,4 +1,4 @@
-package main;
+package gui;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -15,6 +15,12 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import main.Main;
+import main.Player;
+import main.Utility;
+import main.Window;
+import match.Match;
 
 @SuppressWarnings("serial")
 public class Panel extends JPanel implements ActionListener{
@@ -93,7 +99,7 @@ public class Panel extends JPanel implements ActionListener{
 		playingList.setName("playing");
 		playingList.setDragEnabled(true);
 		playingList.setFont(text);
-		playingList.setTransferHandler(new Handler(PanelType.VIEW));
+		playingList.setTransferHandler(new HandlerPlaying());
 		updateText();
 		add(playingList, gbc);
 		frame = new Window(this);
@@ -104,7 +110,7 @@ public class Panel extends JPanel implements ActionListener{
 		masterList.setName("Master");
 		masterList.setDragEnabled(true);
 		masterList.setFont(text);
-		masterList.setTransferHandler(new Handler(PanelType.MASTER));
+		masterList.setTransferHandler(new HandlerMaster());
 		masterList.setLayoutOrientation(JList.VERTICAL_WRAP);
 		updateMaster();
 		add(masterList, gbc);

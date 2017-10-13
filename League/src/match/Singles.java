@@ -1,6 +1,10 @@
-package main;
+package match;
 
 import java.awt.event.ActionEvent;
+
+import main.Main;
+import main.Player;
+import main.Utility;
 
 @SuppressWarnings("serial")
 public class Singles extends Match {
@@ -11,6 +15,7 @@ public class Singles extends Match {
 	public Singles(Player first, Player second) {
 		this.first = first;
 		this.second = second;
+		type = MatchType.SINGLES;
 		count++;
 		if(Main.GUI) panel();
 	}
@@ -22,13 +27,13 @@ public class Singles extends Match {
 			return second.toString();
 	}
 
-	protected void display() {
+	public void display() {
 		System.out.println(first + "      vs      " + second);
 		System.out.println();
 		System.out.println("-------------------------------------");
 	}
 
-	protected void complete() {
+	public void complete() {
 		System.out.println("Who won? ('0' to cancel)");
 		System.out.println();
 		System.out.println("1. " + first + ".");
@@ -71,7 +76,7 @@ public class Singles extends Match {
 		}
 	}
 
-	protected void swap(Player player1, Player player2) {
+	public void swap(Player player1, Player player2) {
 
 		if(first.equals(player1)){
 			first = player2;
@@ -87,6 +92,7 @@ public class Singles extends Match {
 		}
 		
 		text();
+		frame.pack();
 	}
 	
 	protected void tie() {

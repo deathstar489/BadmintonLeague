@@ -1,4 +1,6 @@
-package main;
+package match;
+
+import main.Player;
 
 /**
  * @author Jiashu Wang
@@ -59,7 +61,7 @@ public class Pair {
 		else if(first.equals(player2)){
 			first = player1;
 		}
-		else if(second.equals(player1)){
+		if(second.equals(player1)){
 			second = player2;
 		}
 		else if(second.equals(player2)){

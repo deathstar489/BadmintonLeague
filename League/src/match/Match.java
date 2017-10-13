@@ -1,4 +1,4 @@
-package main;
+package match;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -12,6 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import main.Main;
+import main.Player;
+import main.Utility;
+import main.Window;
+
+
 /**
  * @author Jiashu Wang
  *
@@ -22,9 +28,10 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 	private Font font = Utility.font;
 	
 	private boolean finished = false;
-	protected static int count = 0;
+	protected MatchType type;
+	public static int count = 0;
 	
-	protected Window frame;
+	public Window frame;
 	
 	private JButton[] buttons = new JButton[] {new JButton(), new JButton(), new JButton()};
 	
@@ -71,8 +78,36 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		for(JButton button: buttons) {
 			button.setFont(font);
 			button.addActionListener(this);
-			
 			add(button, gbc);
+//			button.setTransferHandler(new HandlerMatch());
+//			button.addMouseListener(new MouseAdapter() {
+//			    public void mousePressed(MouseEvent e) {
+//			    	
+//			    	if(33 < e.getY() && e.getY() < 66 && type == MatchType.DOUBLES) {
+//			    	}
+//			    	else {
+//			    		int player;
+//			    		if(type == MatchType.SINGLES)
+//			    			player = 0;
+//			    		else if(e.getY() <= 33)
+//				        	player = 1;
+//				        else
+//				        	player = 2;
+//				    	System.out.println(e.getY());
+//				        JComponent c = (JComponent) e.getComponent(); 
+//				        HandlerMatch handler = (HandlerMatch) c.getTransferHandler();
+//				        handler.exportAsDrag(c, e, TransferHandler.COPY, player);
+//			    	}
+//			    }
+//			    
+//			    public void mouseReleased(MouseEvent e) {
+//
+//			        JComponent c = (JComponent) e.getComponent(); 
+//			    	HandlerMatch handler = (HandlerMatch) c.getTransferHandler();
+//			    	//handler.importData(info);
+//			    }
+//			    
+//			});
 		}
 		
 		frame = new Window(this);
@@ -82,7 +117,6 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 		buttons[0].setText("<html><center>" + getGame("First").replaceAll("\\n", "<br>") + "</center></html>");
 		buttons[1].setText("<html><center>Tie</center></html>");
 		buttons[2].setText("<html><center>" + getGame("Second").replaceAll("\\n", "<br>") + "</center></html>");
-
 	}
 	
 	/**
@@ -95,19 +129,19 @@ public abstract class Match extends JPanel implements ActionListener{//Object Ma
 	/**
 	 * Displays the Match.
 	 */
-	protected abstract void display();
+	public abstract void display();
 	
 	/**
 	 * Completes a Match. (Submitting a score)
 	 */
-	protected abstract void complete();
+	public abstract void complete();
 	
 	/**
 	 * Swaps two Players.
 	 * @param player1 The first player to swap.
 	 * @param player2 The second player to swap.
 	 */
-	protected abstract void swap(Player player1, Player player2);
+	public abstract void swap(Player player1, Player player2);
 
 	protected abstract void tie();
 	public abstract void actionPerformed(ActionEvent e);
